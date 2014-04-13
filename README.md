@@ -16,3 +16,9 @@ The game is being developed in Visual Studio 2012 Express Edition, but I plan on
 Tigarmageddon 2D is still in development. I am in college now and I get way too much homework, so development is going very slowly for now. I am studying Pure and Applied Sciences, so we don't learn any computer science (makes sense, right?). Feel free to look over the code, and if you see any problems or ways to improve things such as efficiency, it would be greatly appreciated if you send me an email at harleyw@hotmail.com.
 
 All graphics and animations in the game were designed by me as well, so I don't expect them to be all that great ;)
+
+Please Note
+---------------
+This game is still under development, and is nowhere near complete. The code is not anywhere close to perfect.
+Also, please note that a lot of code in this repository is not being used at all, for example, the Particle class. I was using it originally, but then I came up with a better way to handle things. Some useless code just hasn't been deleted yet, just in case I need it later, or just in case I want it for reference.
+Furthermore, there are some useless function calls and if statements in the game loop in Main.cpp as well. Once again, I was using those functions before but not anymore.
