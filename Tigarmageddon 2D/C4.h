@@ -18,6 +18,8 @@ public:
 
 	void Update();
 	void Detonate();
+	void CheckExplosion();
+
 	void setRenderer(SDL_Renderer* renderer);
 
 	static CSprite c4sprite;

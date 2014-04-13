@@ -1,4 +1,5 @@
 #include "C4.h"
+#include "Main.h"
 #define pi M_PI
 
 C4::C4(float X, float Y, int* _xOffset, int* _yOffset, SDL_Renderer* _renderer) :
@@ -66,6 +67,7 @@ void C4::Update()
 				SDL_RenderFillRect(renderer,&particles[c]);
 			}
 		}
+		CheckExplosion();
 		exptime++;
 	}
 	else
@@ -88,6 +90,22 @@ void C4::Detonate()
 	{
 		particleCoordinates[c].x = x;
 		particleCoordinates[c].y = y;
+	}
+}
+
+void C4::CheckExplosion()
+{
+	for(int c = 0; c < Main::tigers.size(); c++)
+	{
+		/*
+		if(sqrt((pow(x,2) - pow(Main::tigers[c]->getX() - *xOffset,2) + (pow(y,2) - pow(Main::tigers[c]->getY() - *yOffset,2)))) <= EXPLOSION_RADIUS) 
+		{
+			Main::tigers[c]->Damage(Main::tigers[c]->getHealth() * 2);
+		}else printf("%.2f\n", sqrt((pow(x,2) - pow(Main::tigers[c]->getX() + *xOffset,2) + (pow(y,2) - pow(Main::tigers[c]->getY() + *yOffset,2)))));
+		*/
+		if(abs(x - Main::tigers[c]->getX()) > exptime * PARTICLE_SPEED) continue;
+		if(abs(y - Main::tigers[c]->getY()) > exptime * PARTICLE_SPEED) continue;
+		Main::tigers[c]->Damage(Main::tigers[c]->getHealth() * 2);
 	}
 }
 
@@ -114,7 +132,7 @@ C4::~C4(void)
 {
 }
 
-const int C4::PARTICLE_SIZE = 16;
+const int C4::PARTICLE_SIZE = 32;
 const int C4::AMOUNT_OF_PARTICLES = 120;
 const int C4::PARTICLE_SPEED = 2;
 const int C4::PARTICLE_LIFE = 64;

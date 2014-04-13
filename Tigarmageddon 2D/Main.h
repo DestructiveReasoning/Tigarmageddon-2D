@@ -60,6 +60,7 @@ private:
 	CSprite* stoneSprite;
 	CSprite* pauseMenuSprite;
 	CSprite* c4Sprite;
+	CSprite* ammoBoxSprite;
 
 	//Map Stuff
 	CSprite* land;

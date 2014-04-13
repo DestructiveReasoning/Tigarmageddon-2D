@@ -50,6 +50,7 @@ Main::Main(int width, int height) :
 	pauseMenuSprite = new CSprite(screen->getRenderer(),"pauseMenu.png",0,0,250,350);
 	c4Sprite = new CSprite(screen->getRenderer(), "c4.png", 0,0,24,24);
 	paw = new CSprite(screen->getRenderer(),"tigerpaw.png",STARTING_POINT_X,STARTING_POINT_Y,40,40);
+	ammoBoxSprite = new CSprite(screen->getRenderer(),"AmmoBox.png",0,0,32,32);
 
 	std::shared_ptr<CSprite> normalTigerExtended(new CSprite(screen->getRenderer(),"tigerextended.png",100,100,32,80));
 	std::shared_ptr<CSprite> normalTigerClosed  (new CSprite(screen->getRenderer(),"tigerclosed.png",100,100,32,80));
@@ -128,6 +129,7 @@ Main::~Main(void)
 	delete pauseMenuSprite;
 	delete c4Sprite;
 	delete paw;
+	delete ammoBoxSprite;
 	for(unsigned int c = 0; c < stones.size(); c++)
 	{
 		delete stones[c];
@@ -258,8 +260,9 @@ void Main::handleInput4(Screen* screen)
 	{
 		if(!player.getC4()->render)
 		{
-			if(player.getC4()->ReadyToClick()) {
+			if(player.getC4()->ReadyToClick() && player.hasC4) {
 				player.PlaceC4(screen);
+				player.hasC4 = false;
 			}
 		}else 
 		{

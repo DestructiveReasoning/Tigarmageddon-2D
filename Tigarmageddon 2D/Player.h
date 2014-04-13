@@ -55,6 +55,7 @@ public:
 	void init(SDL_Renderer* renderer);
 
 	C4* getC4();
+	bool hasC4;
 
 private:
 	int* xOffset;

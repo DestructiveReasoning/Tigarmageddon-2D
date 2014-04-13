@@ -17,7 +17,8 @@ Player::Player(float X, float Y, CSprite* csprite, int* _xOffset, int* _yOffset,
 	Glock_Damage(10),
 	Skorpion_Damage(10),
 	Spas_Damage(35),
-	GattlingGun_Damage(15)
+	GattlingGun_Damage(15),
+	hasC4(true)
 {
 	angle = 0.0;
 	lastTime = SDL_GetTicks();
