@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Tiger.h"
 #include "Particle.h"
+#include "AmmoBox.h"
 
 class Main
 {
@@ -32,6 +33,8 @@ public:
 	
 	static std::vector<std::shared_ptr<Tiger>> tigers; //Initialized
 	std::vector<std::unique_ptr<Particle>> particles;
+
+	static std::vector<std::shared_ptr<AmmoBox>> ammoBoxes;
 
 	std::vector<std::shared_ptr<CSprite>> normalTiger; //No need to initialize
 

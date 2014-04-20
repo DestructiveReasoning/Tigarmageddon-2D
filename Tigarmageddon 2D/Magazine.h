@@ -6,6 +6,7 @@ public:
 	~Magazine(void);
 
 	int* getAmmo(void);
+	void setAmmo(int _ammo);
 	const int* getCapacity(void);
 
 private:

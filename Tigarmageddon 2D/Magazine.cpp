@@ -16,6 +16,11 @@ const int* Magazine::getCapacity(void)
 	return &capacity;
 }
 
+void Magazine::setAmmo(int _ammo)
+{
+	ammo = _ammo;
+}
+
 Magazine::~Magazine(void)
 {
 }

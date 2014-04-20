@@ -25,7 +25,7 @@ Main::Main(int width, int height) :
 	paused = false;
 	levelWidth = 3000;
 	levelHeight = 3000;
-	stones.clear();
+	ammoBoxes.clear();
 	running = true;
 	w = width;
 	h = height;
@@ -104,6 +104,11 @@ Main::Main(int width, int height) :
 
 	//tigers.push_back(std::unique_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,300,300,&xOffset,&yOffset,&player)));
 	tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,100,100,&xOffset,&yOffset,&player)));
+
+	for(auto c = 0; c < 1; c++)
+	{
+		ammoBoxes.push_back(std::shared_ptr<AmmoBox>(new AmmoBox(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer())));
+	}
 }
 
 void Main::Start(void)
@@ -168,13 +173,19 @@ void Main::gameLoop(void)
 		}
 
 		if(!paused) player.Update();
+
+		for(auto c = 0; c < ammoBoxes.size(); c++)
+		{
+			ammoBoxes[c]->Render();
+		}
+
 		player.Render(xOffset,yOffset);
 
 		for(int c = 0; c < tigers.size(); c++)
 		{
 			if(!paused) tigers[c]->Update();
 			tigers[c]->Render();
-
+			
 			if(tigers[c]->getHealth() <= 0)
 			{
 				tigers[c--] = tigers.back();
@@ -184,6 +195,7 @@ void Main::gameLoop(void)
 				{
 					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player)));
 				}
+				ammoBoxes.push_back(std::shared_ptr<AmmoBox>(new AmmoBox(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer())));
 			}
 		}
 
@@ -361,5 +373,6 @@ const int Main::ExplosionRadius = 50;
 GameObject* a[] = {nullptr};
 std::vector<GameObject*> Main::stones;
 std::vector<std::shared_ptr<Tiger>> Main::tigers;
+std::vector<std::shared_ptr<AmmoBox>> Main::ammoBoxes;
 int Main::killcount = 0;
 bool Main::paused = false;

@@ -70,6 +70,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AmmoBox.cpp" />
     <ClCompile Include="BallisticKnife.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="C4.cpp" />
@@ -86,6 +87,7 @@
     <ClCompile Include="Tiger.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AmmoBox.h" />
     <ClInclude Include="BallisticKnife.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="C4.h" />

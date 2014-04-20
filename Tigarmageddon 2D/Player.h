@@ -57,6 +57,8 @@ public:
 	C4* getC4();
 	bool hasC4;
 
+	void collectAmmo(int c);
+
 private:
 	int* xOffset;
 	int* yOffset;

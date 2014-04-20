@@ -107,6 +107,15 @@ void Player::Update()
 			}
 		}
 	}
+
+	for(auto c = 0; c < Main::ammoBoxes.size(); c++)
+	{
+		if(onCollision(Main::ammoBoxes[c].get(),velx,vely))
+		{
+			collectAmmo(c);
+			break;
+		}
+	}
 	
 	for(unsigned int c = 0; c < bullets.size(); c++)
 	{
@@ -232,6 +241,14 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 	default:
 		break;
 	}
+}
+
+void Player::collectAmmo(int c)
+{
+	clips[weapon].setAmmo(*clips[weapon].getCapacity());
+	hasC4 = true;
+	Main::ammoBoxes[c] = Main::ammoBoxes.back();
+	Main::ammoBoxes.pop_back();
 }
 
 void Player::PlaceC4(Screen* screen)
