@@ -59,6 +59,9 @@ public:
 
 	void collectAmmo(int c);
 
+	bool isDead(void);
+	void kill(void);
+
 private:
 	int* xOffset;
 	int* yOffset;
@@ -121,5 +124,7 @@ private:
 	const int Skorpion_Damage;
 	const int Spas_Damage;
 	const int GattlingGun_Damage;
+
+	bool dead;
 };
 

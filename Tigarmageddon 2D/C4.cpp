@@ -1,15 +1,17 @@
 #include "C4.h"
 #include "Main.h"
+#include "Player.h"
 #define pi M_PI
 
-C4::C4(float X, float Y, int* _xOffset, int* _yOffset, SDL_Renderer* _renderer) :
+C4::C4(float X, float Y, int* _xOffset, int* _yOffset, Player* _player, SDL_Renderer* _renderer) :
 	GameObject(X,Y,new CSprite(_renderer,"c4.png",X,Y,24,24)),
 	xOffset(_xOffset),
 	yOffset(_yOffset),
 	render(false),
 	timer(0),
 	renderer(_renderer),
-	exptime(-1)
+	exptime(-1),
+	player(_player)
 {
 	for(unsigned int c = 0; c < AMOUNT_OF_PARTICLES; c++)
 	{
@@ -107,6 +109,10 @@ void C4::CheckExplosion()
 		if(abs(y - Main::tigers[c]->getY()) > exptime * PARTICLE_SPEED) continue;
 		Main::tigers[c]->Damage(Main::tigers[c]->getHealth() * 2);
 	}
+	if(abs(x - player->getX()) > exptime * PARTICLE_SPEED) return;
+	if(abs(y - player->getY()) > exptime * PARTICLE_SPEED) return;
+	printf("DEAD\n");
+	player->kill();
 }
 
 void C4::setRenderer(SDL_Renderer* renderer)
@@ -130,6 +136,7 @@ bool C4::ReadyToClick()
 
 C4::~C4(void)
 {
+	delete sprite;
 }
 
 const int C4::PARTICLE_SIZE = 32;

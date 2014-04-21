@@ -18,7 +18,8 @@ Player::Player(float X, float Y, CSprite* csprite, int* _xOffset, int* _yOffset,
 	Skorpion_Damage(10),
 	Spas_Damage(35),
 	GattlingGun_Damage(15),
-	hasC4(true)
+	hasC4(true),
+	dead(false)
 {
 	angle = 0.0;
 	lastTime = SDL_GetTicks();
@@ -55,13 +56,15 @@ Player::Player(float X, float Y, CSprite* csprite, int* _xOffset, int* _yOffset,
 	fg.r = 0xdd;
 	fg.g = 0xdd;
 	fg.b = 0xff;
-	fg.a = 0x66;
+	fg.a = 0x33;
 	initHUD();
 	speed = Default_Player_Speed;
 }
 
 void Player::Update()
 {
+	if(dead) return;
+
 	if(weapon == GattlingGun)
 	{
 		speed = 1;
@@ -71,6 +74,17 @@ void Player::Update()
 	}
 	else speed = Default_Player_Speed;
 
+	//Check Collision With Tigers
+	for(auto c = 0; c < Main::tigers.size(); c++)
+	{
+		if(onCollision(Main::tigers[c].get(),velx,vely) && Main::tigers[c]->getHealth() > 0)
+		{
+			this->kill();
+			return;
+		}
+	}
+
+	//Check Collision With Stones
 	bool colliding = false;
 	for(int c = 0; c < Main::stones.size(); c++)
 	{
@@ -94,6 +108,7 @@ void Player::Update()
 	}
 	if(!colliding) move(0,vely);
 
+	//Check Bullet Collisions
 	for(auto c = 0; c < bullets.size(); c++)
 	{
 		if(bullets[c]->onTheGround)
@@ -108,6 +123,7 @@ void Player::Update()
 		}
 	}
 
+	//Check Collision With Ammoboxes
 	for(auto c = 0; c < Main::ammoBoxes.size(); c++)
 	{
 		if(onCollision(Main::ammoBoxes[c].get(),velx,vely))
@@ -534,7 +550,17 @@ C4* Player::getC4()
 
 void Player::init(SDL_Renderer* renderer)
 {
-	c4 = new C4(0,0,xOffset,yOffset,renderer);
+	c4 = new C4(0,0,xOffset,yOffset,this,renderer);
+}
+
+bool Player::isDead(void)
+{
+	return dead;
+}
+
+void Player::kill(void)
+{
+	dead = true;
 }
 
 Player::~Player(void)

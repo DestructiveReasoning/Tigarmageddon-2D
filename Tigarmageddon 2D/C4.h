@@ -5,6 +5,8 @@
 
 #define TIME_BUFFER 1000
 
+class Player;
+
 typedef struct{
 	float x;
 	float y;
@@ -13,7 +15,7 @@ typedef struct{
 class C4 : public GameObject
 {
 public:
-	C4(float X, float Y, int* _xOffset, int* _yOffset, SDL_Renderer* renderer);
+	C4(float X, float Y, int* _xOffset, int* _yOffset, Player* player, SDL_Renderer* renderer);
 	~C4(void);
 
 	void Update();
@@ -42,6 +44,8 @@ private:
 	int* yOffset;
 
 	int exptime;
+
+	Player* player;
 
 	std::vector<SDL_Rect> particles;
 	std::vector<coordinate> particleCoordinates;

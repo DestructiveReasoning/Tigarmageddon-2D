@@ -64,6 +64,8 @@ private:
 	CSprite* pauseMenuSprite;
 	CSprite* c4Sprite;
 	CSprite* ammoBoxSprite;
+	CSprite* bloodSprite;
+	CSprite* youDied;
 
 	//Map Stuff
 	CSprite* land;
@@ -98,6 +100,8 @@ private:
 	CSprite* paw;
 	Uint32 now;
 	Uint32 last;
+
+	Uint32 deadtimer;
 
 	bool showControls;
 };

@@ -10,6 +10,7 @@
 #define STARTING_POINT_X 300
 #define STARTING_POINT_Y 230
 #define GAP_SIZE 65
+#define DEATH_LENGTH 5000
 
 Main::Main(int width, int height) : 
 	xOffset(0), 
@@ -17,10 +18,12 @@ Main::Main(int width, int height) :
 	player(400,400,playerSprite, &xOffset, &yOffset,width,height,bullet),
 	number_of_stones(50),
 	restart(true),
-	showControls(false)
+	showControls(false),
+	deadtimer(-1)
 {
 	wave = 1;
 	stones.clear();
+	tigers.clear();
 	killcount = 0;
 	paused = false;
 	levelWidth = 3000;
@@ -51,6 +54,8 @@ Main::Main(int width, int height) :
 	c4Sprite = new CSprite(screen->getRenderer(), "c4.png", 0,0,24,24);
 	paw = new CSprite(screen->getRenderer(),"tigerpaw.png",STARTING_POINT_X,STARTING_POINT_Y,40,40);
 	ammoBoxSprite = new CSprite(screen->getRenderer(),"AmmoBox.png",0,0,32,32);
+	bloodSprite = new CSprite(screen->getRenderer(),"Blood.png",0,0,800,800);
+	youDied = new CSprite(screen->getRenderer(),"YouDied.png",0,0,600,200);
 
 	std::shared_ptr<CSprite> normalTigerExtended(new CSprite(screen->getRenderer(),"tigerextended.png",100,100,32,80));
 	std::shared_ptr<CSprite> normalTigerClosed  (new CSprite(screen->getRenderer(),"tigerclosed.png",100,100,32,80));
@@ -135,6 +140,8 @@ Main::~Main(void)
 	delete c4Sprite;
 	delete paw;
 	delete ammoBoxSprite;
+	delete bloodSprite;
+	delete youDied;
 	for(unsigned int c = 0; c < stones.size(); c++)
 	{
 		delete stones[c];
@@ -158,6 +165,7 @@ void Main::gameLoop(void)
 	{
 		if(!paused) pauseIndex = 0;
 		start = SDL_GetTicks();
+
 		screen->refresh();
 
 		for(int c = 0; c < 3; c++)
@@ -191,7 +199,7 @@ void Main::gameLoop(void)
 				tigers[c--] = tigers.back();
 				tigers.pop_back();
 				killcount++;
-				if(killcount < 10)
+				if(killcount < 20)
 				{
 					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player)));
 				}
@@ -228,6 +236,20 @@ void Main::gameLoop(void)
 		r.y = 0;
 		r.w = 300;
 		r.h = 300;
+
+		if(player.isDead())
+		{
+			bloodSprite->draw(0,0,0,0);
+			youDied->draw(w/2 - 300,16,0,0);
+			if(deadtimer == -1) deadtimer = SDL_GetTicks();
+			else if(SDL_GetTicks() - deadtimer >= DEATH_LENGTH)
+			{
+				//Close Game
+				restart = true;
+				running = false;
+				break;
+			}
+		}
 
 		if(paused)
 		{
