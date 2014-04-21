@@ -1,7 +1,7 @@
 #include "Tiger.h"
 #include "Main.h"
 
-Tiger::Tiger(SDL_Renderer* _renderer,std::vector<std::shared_ptr<CSprite>> _spriteVector,float X, float Y, int* _xOffset, int* _yOffset, Player* _player) : 
+Tiger::Tiger(SDL_Renderer* _renderer,std::vector<std::shared_ptr<CSprite>> _spriteVector,float X, float Y, float* _xOffset, float* _yOffset, Player* _player) : 
 	GameObject(X,Y,_spriteVector[0].get()),
 	xOffset(_xOffset),
 	yOffset(_yOffset),
@@ -10,7 +10,7 @@ Tiger::Tiger(SDL_Renderer* _renderer,std::vector<std::shared_ptr<CSprite>> _spri
 	renderer(_renderer),
 	spriteVector(_spriteVector)
 {
-	speed = Player::Default_Player_Speed;
+	speed = Player::Default_Player_Speed * NORMAL_TIGER_SPEED_CONSTANT;
 	last = SDL_GetTicks();
 	now = SDL_GetTicks();
 	rect.x = int(x);
@@ -142,3 +142,5 @@ double Tiger::getAngle(void)
 Tiger::~Tiger(void)
 {
 }
+
+const float Tiger::NORMAL_TIGER_SPEED_CONSTANT = 1.2;

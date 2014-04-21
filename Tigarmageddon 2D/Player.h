@@ -16,12 +16,13 @@ class Main;
 class Player : public GameObject
 {
 public:
-	Player(float X, float Y, CSprite* csprite, int* _xOffset, int* _yOffset, int _gameWidth, int _gameHeight, CSprite* bulletSprite);
+	Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOffset, int _gameWidth, int _gameHeight, CSprite* bulletSprite);
 	~Player(void);
 
 	void Update();
 	void Render(int _xOffset, int _yOffset);
 	void move(float velX, float velY);
+	void move2(float velX, float velY);
 
 	void setScreen(Screen* _screen);
 	void setRenderer(SDL_Renderer* _renderer);
@@ -63,8 +64,8 @@ public:
 	void kill(void);
 
 private:
-	int* xOffset;
-	int* yOffset;
+	float* xOffset;
+	float* yOffset;
 	int gameWidth;
 	int gameHeight;
 

@@ -77,8 +77,8 @@ private:
 
 	Player player;
 
-	int xOffset;
-	int yOffset;
+	float xOffset;
+	float yOffset;
 
 	SDL_Surface* logoSurface;
 	SDL_Surface* cursorSurface;

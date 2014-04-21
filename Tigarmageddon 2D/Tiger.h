@@ -10,7 +10,7 @@ class Main;
 class Tiger : public GameObject
 {
 public:
-	Tiger(SDL_Renderer* _renderer,std::vector<std::shared_ptr<CSprite>> _spriteVector,float X, float Y, int* _xOffset, int* _yOffset, Player* _player);
+	Tiger(SDL_Renderer* _renderer,std::vector<std::shared_ptr<CSprite>> _spriteVector,float X, float Y, float* _xOffset, float* _yOffset, Player* _player);
 	~Tiger(void);
 
 	void Update(void);
@@ -30,10 +30,12 @@ public:
 	int getHealth(void);
 	void Damage(int damage);
 
+	static const float NORMAL_TIGER_SPEED_CONSTANT;
+
 private:
 	Player* player;
-	int* xOffset;
-	int* yOffset;
+	float* xOffset;
+	float* yOffset;
 
 	SDL_Renderer* renderer;
 

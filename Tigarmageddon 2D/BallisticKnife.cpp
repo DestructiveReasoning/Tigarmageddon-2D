@@ -1,7 +1,7 @@
 #include "BallisticKnife.h"
 #include "Main.h"
 
-BallisticKnife::BallisticKnife(float X, float Y, float velX, float velY, int* _xOffset, int* _yOffset,SDL_Renderer* renderer) :
+BallisticKnife::BallisticKnife(float X, float Y, float velX, float velY, float* _xOffset, float* _yOffset,SDL_Renderer* renderer) :
 	Bullet(X,Y,velX,velY,_xOffset,_yOffset,35,100,renderer),
 	_sprite(renderer,"ballisticknife.png",X,Y,16,16),
 	angle(atan2(velY,velX))

@@ -16,7 +16,7 @@ Main::Main(int width, int height) :
 	xOffset(0), 
 	yOffset(0), 
 	player(400,400,playerSprite, &xOffset, &yOffset,width,height,bullet),
-	number_of_stones(50),
+	number_of_stones(5),
 	restart(true),
 	showControls(false),
 	deadtimer(-1)
@@ -289,6 +289,27 @@ void Main::handleInput4(Screen* screen)
 	if(state[SDL_SCANCODE_3]) player.setWeapon(player.Ballistic_Knife);
 	if(state[SDL_SCANCODE_4]) player.setWeapon(player.Spas);
 	if(state[SDL_SCANCODE_5]) player.setWeapon(player.GattlingGun);
+
+	if(state[SDL_SCANCODE_A] && state[SDL_SCANCODE_W]) //UP AND LEFT
+	{
+		player.setVelX(-player.getSpeed()/sqrt(2));
+		player.setVelY(-player.getSpeed()/sqrt(2));
+	}
+	else if(state[SDL_SCANCODE_D] && state[SDL_SCANCODE_W]) //UP AND RIGHT
+	{
+		player.setVelX(player.getSpeed()/sqrt(2));
+		player.setVelY(-player.getSpeed()/sqrt(2));
+	}
+	else if(state[SDL_SCANCODE_A] && state[SDL_SCANCODE_S]) //DOWN AND LEFT
+	{
+		player.setVelX(-player.getSpeed()/sqrt(2));
+		player.setVelY(player.getSpeed()/sqrt(2));
+	}
+	else if(state[SDL_SCANCODE_D] && state[SDL_SCANCODE_S]) //DOWN AND RIGHT
+	{
+		player.setVelX(player.getSpeed()/sqrt(2));
+		player.setVelY(player.getSpeed()/sqrt(2));
+	}
 
 	if(state[SDL_SCANCODE_SPACE])
 	{

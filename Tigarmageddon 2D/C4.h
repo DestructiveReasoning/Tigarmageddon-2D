@@ -15,7 +15,7 @@ typedef struct{
 class C4 : public GameObject
 {
 public:
-	C4(float X, float Y, int* _xOffset, int* _yOffset, Player* player, SDL_Renderer* renderer);
+	C4(float X, float Y, float* _xOffset, float* _yOffset, Player* player, SDL_Renderer* renderer);
 	~C4(void);
 
 	void Update();
@@ -40,8 +40,8 @@ public:
 
 private:
 	Uint32 timer;
-	int* xOffset;
-	int* yOffset;
+	float* xOffset;
+	float* yOffset;
 
 	int exptime;
 

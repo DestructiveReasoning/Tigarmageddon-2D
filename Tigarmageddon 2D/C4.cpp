@@ -3,7 +3,7 @@
 #include "Player.h"
 #define pi M_PI
 
-C4::C4(float X, float Y, int* _xOffset, int* _yOffset, Player* _player, SDL_Renderer* _renderer) :
+C4::C4(float X, float Y, float* _xOffset, float* _yOffset, Player* _player, SDL_Renderer* _renderer) :
 	GameObject(X,Y,new CSprite(_renderer,"c4.png",X,Y,24,24)),
 	xOffset(_xOffset),
 	yOffset(_yOffset),

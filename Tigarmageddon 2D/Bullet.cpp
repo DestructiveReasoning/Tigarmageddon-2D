@@ -1,7 +1,7 @@
 #include "Bullet.h"
 #include "Main.h"
 
-Bullet::Bullet(float X, float Y, float velX, float velY, int* _xOffset, int* _yOffset, int _range, int _damage, SDL_Renderer* renderer) : 
+Bullet::Bullet(float X, float Y, float velX, float velY, float* _xOffset, float* _yOffset, int _range, int _damage, SDL_Renderer* renderer) : 
 	GameObject(X,Y), 
 	xOffset(_xOffset), 
 	yOffset(_yOffset),

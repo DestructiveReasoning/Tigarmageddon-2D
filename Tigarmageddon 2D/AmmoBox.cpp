@@ -1,7 +1,7 @@
 #include "AmmoBox.h"
 
 
-AmmoBox::AmmoBox(float X, float Y, int* _xOffset, int* _yOffset, SDL_Renderer* _renderer) :
+AmmoBox::AmmoBox(float X, float Y, float* _xOffset, float* _yOffset, SDL_Renderer* _renderer) :
 	GameObject(X,Y,new CSprite(_renderer,"AmmoBox.png",X,Y,32,32)),
 	x(X),
 	y(Y),

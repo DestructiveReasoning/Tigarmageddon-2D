@@ -6,7 +6,7 @@
 class AmmoBox : public GameObject
 {
 public:
-	AmmoBox(float X, float Y, int* _xOffset, int* _yOffset, SDL_Renderer* renderer);
+	AmmoBox(float X, float Y, float* _xOffset, float* _yOffset, SDL_Renderer* renderer);
 	~AmmoBox(void);
 
 	void Render();
@@ -14,8 +14,8 @@ public:
 private:
 	float x;
 	float y;
-	int* xOffset;
-	int* yOffset;
+	float* xOffset;
+	float* yOffset;
 	SDL_Renderer* renderer;
 };
 

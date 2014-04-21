@@ -6,7 +6,7 @@
 class BallisticKnife : public Bullet
 {
 public:
-	BallisticKnife(float X, float Y, float velX, float velY, int* _xOffset, int* _yOffset,SDL_Renderer* renderer);
+	BallisticKnife(float X, float Y, float velX, float velY, float* _xOffset, float* _yOffset,SDL_Renderer* renderer);
 	~BallisticKnife(void);
 
 	void Update(void);

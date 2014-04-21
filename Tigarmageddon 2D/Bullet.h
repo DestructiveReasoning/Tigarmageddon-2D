@@ -8,7 +8,7 @@ class Main;
 class Bullet : public GameObject
 {
 public:
-	Bullet(float X, float Y, float velX, float velY, int* _xOffset, int* _yOffset, int range, int damage, SDL_Renderer* renderer);
+	Bullet(float X, float Y, float velX, float velY, float* _xOffset, float* _yOffset, int range, int damage, SDL_Renderer* renderer);
 	virtual void Update();
 	void Render();
 	int getRange(void);
@@ -34,7 +34,7 @@ protected:
 	int age;
 	int range;
 	int damage;
-	int* xOffset;
-	int* yOffset;
+	float* xOffset;
+	float* yOffset;
 };
 

@@ -11,10 +11,10 @@
 #define GATTLINGGUN_FIRE_RATE 0.025
 #define SPAS_ANGLE_OFFSET 0.1;
 
-Player::Player(float X, float Y, CSprite* csprite, int* _xOffset, int* _yOffset, int _gameWidth, int _gameHeight, CSprite* bullet) : 
+Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOffset, int _gameWidth, int _gameHeight, CSprite* bullet) : 
 	GameObject(X,Y,csprite),
 	PaintBallGun_Damage(17),
-	Glock_Damage(10),
+	Glock_Damage(9),
 	Skorpion_Damage(10),
 	Spas_Damage(35),
 	GattlingGun_Damage(15),
@@ -34,7 +34,7 @@ Player::Player(float X, float Y, CSprite* csprite, int* _xOffset, int* _yOffset,
 	readyToShoot = true;
 	readyToShoot3 = true;
 	//Paintball Gun
-	clips.push_back(Magazine(80,80));
+	clips.push_back(Magazine(60,60));
 	//Glock
 	clips.push_back(Magazine(-1,-1));
 	//Skorpion
@@ -42,7 +42,7 @@ Player::Player(float X, float Y, CSprite* csprite, int* _xOffset, int* _yOffset,
 	//Gattling Gun
 	clips.push_back(Magazine(100,100));
 	//Spas
-	clips.push_back(Magazine(12,12));
+	clips.push_back(Magazine(6,6));
 	//Ballistic Knife
 	clips.push_back(Magazine(1,1));
 
@@ -65,15 +65,6 @@ void Player::Update()
 {
 	if(dead) return;
 
-	if(weapon == GattlingGun)
-	{
-		speed = 1;
-	}else if(weapon == Glock || weapon == Skorpion)
-	{
-		speed = Default_Player_Speed + 1;
-	}
-	else speed = Default_Player_Speed;
-
 	//Check Collision With Tigers
 	for(auto c = 0; c < Main::tigers.size(); c++)
 	{
@@ -95,7 +86,7 @@ void Player::Update()
 		}
 	}
 
-	if(!colliding) move(velx,0);
+	if(!colliding) move2(velx,0);
 
 	colliding = false;
 	for(int c = 0; c < Main::stones.size(); c++)
@@ -106,7 +97,7 @@ void Player::Update()
 			break;
 		}
 	}
-	if(!colliding) move(0,vely);
+	if(!colliding) move2(0,vely);
 
 	//Check Bullet Collisions
 	for(auto c = 0; c < bullets.size(); c++)
@@ -344,6 +335,37 @@ bool Player::onCollisionBullet(Bullet* object, float velX, float velY)
 	}else return false;
 }
 
+void Player::move2(float velX, float velY)
+{
+	//OFFSET STOPS AT -2200
+	x += velX;
+	if(velX > 0)
+	{
+		if(*xOffset - velX < -Main::level_width + gameWidth && x + velX >= gameWidth/2 - sprite->getWidth()/2) *xOffset =  -Main::level_width + gameWidth;
+		else if (x + velX >= gameWidth/2 - sprite->getWidth()/2) *xOffset -= velX;
+	}
+	else if(velX != 0)
+	{
+		if(*xOffset - velX > 0 && x + *xOffset + velX <= gameWidth/2) *xOffset = 0;
+		else if(x + *xOffset + velX <= gameWidth/2) *xOffset -= velX;
+	}
+
+	y += velY;
+	if(velY > 0)
+	{
+		if(*yOffset - velY < -Main::level_height + gameHeight && y + velY >= gameHeight/2 - sprite->getHeight()/2) *yOffset =  -Main::level_height + gameHeight;
+		else if (y + velY >= gameHeight/2 - sprite->getHeight()/2) *yOffset -= velY;
+	}
+	else if(velY != 0)
+	{
+		if(*yOffset - velY > 0 && y + *yOffset + velY <= gameHeight/2) *yOffset = 0;
+		else if(y + *yOffset + velY <= gameHeight/2) *yOffset -= velY;
+	}
+
+	centerX = x + sprite->getRect().w/2;
+	centerY = y + sprite->getRect().h/2;
+}
+
 void Player::move(float velX, float velY)
 {
 	x += velX;
@@ -393,6 +415,7 @@ void Player::move(float velX, float velY)
 	centerX = x + sprite->getRect().w/2;
 	centerY = y + sprite->getRect().h/2;
 
+	//printf("%d\n", *xOffset);
 	//std::cout<<x<<std::endl;
 }
 
@@ -406,6 +429,15 @@ void Player::setWeapon(int w)
 	{
 		setDefaultBarrelPosition(21,-8);
 	}
+
+	if(weapon == GattlingGun)
+	{
+		speed = 1;
+	}else if(weapon == Glock || weapon == Skorpion)
+	{
+		speed = Default_Player_Speed + 0.5;
+	}
+	else speed = Default_Player_Speed;
 }
 
 void Player::cock(int mouseButton)
