@@ -6,3 +6,4 @@
 #include <cmath>
 #include <vector>
 #include <string>
+#include <SDL_mixer.h>

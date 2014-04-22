@@ -4,7 +4,11 @@
 #define STARTINGPOINT_X 640
 #define STARTINGPOINT_Y 427
 
-MainMenu::MainMenu(int _width, int _height)
+MainMenu::MainMenu(int _width, int _height) :
+	audioRate(22050),
+	audioFormat(AUDIO_S16MSB),
+	audioChannels(2),
+	audioBuffers(4096)
 {
 	screen = new Screen(_width,_height,&running);
 	width = _width;
@@ -16,6 +20,20 @@ MainMenu::MainMenu(int _width, int _height)
 	running = true;
 	pawLocation = 0;
 	std::cout<<"New Main Menu" << std::endl;
+
+	SDL_Init(SDL_INIT_AUDIO);
+	if(Mix_OpenAudio(audioRate,audioFormat,audioChannels,audioBuffers))
+	{
+		printf("Cannot open audio device.\n");
+	}
+
+	themeSong = nullptr;
+	themeSong = Mix_LoadMUS("Arsis-My_Oath_To_Madness_8_bit_Remix_.wav");
+	if(themeSong == nullptr)
+	{
+		printf("Could not open music file.\nMake sure it's in OGG format.\n");
+	}
+	Mix_PlayMusic(themeSong,-1);
 }
 
 void MainMenu::menuLoop(void)
@@ -93,4 +111,8 @@ MainMenu::~MainMenu(void)
 	delete paw;
 	std::unique_ptr<Main> main = std::unique_ptr<Main>(new Main(width,height));
 	main->gameLoop();
+	Mix_HaltMusic();
+	Mix_FreeMusic(themeSong);
+	themeSong = NULL;
+	Mix_CloseAudio();
 }

@@ -44,14 +44,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\cppLib\boost_1_55_0\boost;C:\cppLib\SDL2_ttf-2.0.12\include;C:\cppLib\SDL2_image-2.0.0\include;C:\cppLib\SDL2-2.0.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\cppLib\SDL2_mixer-2.0.0\include;C:\cppLib\boost_1_55_0\boost;C:\cppLib\SDL2_ttf-2.0.12\include;C:\cppLib\SDL2_image-2.0.0\include;C:\cppLib\SDL2-2.0.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\cppLib\boost_1_55_0\libs;C:\cppLib\SDL2_ttf-2.0.12\lib\x86;C:\cppLib\SDL2_image-2.0.0\lib\x86;C:\cppLib\SDL2-2.0.1\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\cppLib\SDL2_mixer-2.0.0\lib\x86;C:\cppLib\boost_1_55_0\libs;C:\cppLib\SDL2_ttf-2.0.12\lib\x86;C:\cppLib\SDL2_image-2.0.0\lib\x86;C:\cppLib\SDL2-2.0.1\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

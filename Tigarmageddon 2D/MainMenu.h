@@ -17,6 +17,13 @@ private:
 	int width;
 	int height;
 
+	int audioRate;
+	Uint16 audioFormat;
+	int audioChannels;
+	int audioBuffers;
+
+	Mix_Music* themeSong;
+
 	int pawLocation;
 	Uint32 start;
 	Uint32 last;

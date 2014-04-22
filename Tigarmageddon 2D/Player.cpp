@@ -13,7 +13,7 @@
 
 Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOffset, int _gameWidth, int _gameHeight, CSprite* bullet) : 
 	GameObject(X,Y,csprite),
-	PaintBallGun_Damage(17),
+	PaintBallGun_Damage(15),
 	Glock_Damage(9),
 	Skorpion_Damage(10),
 	Spas_Damage(35),
@@ -422,7 +422,7 @@ void Player::move(float velX, float velY)
 void Player::setWeapon(int w)
 {
 	weapon = Weapon(w);
-	if(w == GattlingGun)
+	if(w == GattlingGun || w == Ballistic_Knife)
 	{
 		setDefaultBarrelPosition(0,-sprite->getHeight()/2 - 16);
 	}else
