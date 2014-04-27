@@ -26,6 +26,7 @@ C4::C4(float X, float Y, float* _xOffset, float* _yOffset, Player* _player, SDL_
 		cd.x = (float)x;
 		cd.y = (float)y;
 		particleCoordinates.push_back(cd);
+		explosion = Mix_LoadWAV("explosion.wav");
 	}
 }
 
@@ -80,6 +81,7 @@ void C4::Update()
 
 void C4::Detonate()
 {
+	Mix_PlayChannel(-1,explosion,0);
 	if(SDL_GetTicks() - timer < TIME_BUFFER) 
 	{
 		render = true;
@@ -141,6 +143,6 @@ C4::~C4(void)
 
 const int C4::PARTICLE_SIZE = 32;
 const int C4::AMOUNT_OF_PARTICLES = 120;
-const int C4::PARTICLE_SPEED = 2;
+const int C4::PARTICLE_SPEED = 3;
 const int C4::PARTICLE_LIFE = 64;
 const int C4::EXPLOSION_RADIUS = PARTICLE_SPEED * PARTICLE_LIFE;

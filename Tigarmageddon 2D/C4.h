@@ -3,7 +3,7 @@
 #include "Sprite.h"
 #include "GameObject.h"
 
-#define TIME_BUFFER 1000
+#define TIME_BUFFER 500
 
 class Player;
 
@@ -51,6 +51,8 @@ private:
 	std::vector<coordinate> particleCoordinates;
 
 	SDL_Renderer* renderer;
+
+	Mix_Chunk* explosion;
 };
 
 

@@ -126,6 +126,14 @@ private:
 	const int Spas_Damage;
 	const int GattlingGun_Damage;
 
+	//SOUND EFFECTS
+	int audioRate;
+	Uint16 audioFormat;
+	int audioChannels;
+	int audioBuffers;
+
+	Mix_Chunk* gunshot;
+
 	bool dead;
 };
 

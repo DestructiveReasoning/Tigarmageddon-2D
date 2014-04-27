@@ -202,6 +202,7 @@ void Main::gameLoop(void)
 				if(killcount < 20)
 				{
 					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player)));
+					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player)));
 				}
 				ammoBoxes.push_back(std::shared_ptr<AmmoBox>(new AmmoBox(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer())));
 			}
@@ -216,7 +217,7 @@ void Main::gameLoop(void)
 			return;
 		}
 
-		handleInput4(screen);
+		if(!player.isDead()) handleInput4(screen);
 
 	    if(screen->getEvent()->type == SDL_QUIT)
 		{
@@ -277,54 +278,57 @@ void Main::gameLoop(void)
 void Main::handleInput4(Screen* screen)
 {
 	state = SDL_GetKeyboardState(NULL);
-	if(state[SDL_SCANCODE_A]) player.setVelX(-player.getSpeed());
-	if(state[SDL_SCANCODE_D]) player.setVelX(player.getSpeed());
-	if(!state[SDL_SCANCODE_A] && !state[SDL_SCANCODE_D]) player.setVelX(0);
-	if(state[SDL_SCANCODE_W]) player.setVelY(-player.getSpeed());
-	if(state[SDL_SCANCODE_S]) player.setVelY(player.getSpeed());
-	if(!state[SDL_SCANCODE_W] && !state[SDL_SCANCODE_S]) player.setVelY(0);
-	if(state[SDL_SCANCODE_0]) player.setWeapon(player.Glock);
-	if(state[SDL_SCANCODE_1]) player.setWeapon(player.PaintballGun);
-	if(state[SDL_SCANCODE_2]) player.setWeapon(player.Skorpion);
-	if(state[SDL_SCANCODE_3]) player.setWeapon(player.Ballistic_Knife);
-	if(state[SDL_SCANCODE_4]) player.setWeapon(player.Spas);
-	if(state[SDL_SCANCODE_5]) player.setWeapon(player.GattlingGun);
+	if(!paused)
+	{
+		if(state[SDL_SCANCODE_A]) player.setVelX(-player.getSpeed());
+		if(state[SDL_SCANCODE_D]) player.setVelX(player.getSpeed());
+		if(!state[SDL_SCANCODE_A] && !state[SDL_SCANCODE_D]) player.setVelX(0);
+		if(state[SDL_SCANCODE_W]) player.setVelY(-player.getSpeed());
+		if(state[SDL_SCANCODE_S]) player.setVelY(player.getSpeed());
+		if(!state[SDL_SCANCODE_W] && !state[SDL_SCANCODE_S]) player.setVelY(0);
+		if(state[SDL_SCANCODE_0]) player.setWeapon(player.Glock);
+		if(state[SDL_SCANCODE_1]) player.setWeapon(player.PaintballGun);
+		if(state[SDL_SCANCODE_2]) player.setWeapon(player.Skorpion);
+		if(state[SDL_SCANCODE_3]) player.setWeapon(player.Ballistic_Knife);
+		if(state[SDL_SCANCODE_4]) player.setWeapon(player.Spas);
+		if(state[SDL_SCANCODE_5]) player.setWeapon(player.GattlingGun);
 
-	if(state[SDL_SCANCODE_A] && state[SDL_SCANCODE_W]) //UP AND LEFT
-	{
-		player.setVelX(-player.getSpeed()/sqrt(2));
-		player.setVelY(-player.getSpeed()/sqrt(2));
-	}
-	else if(state[SDL_SCANCODE_D] && state[SDL_SCANCODE_W]) //UP AND RIGHT
-	{
-		player.setVelX(player.getSpeed()/sqrt(2));
-		player.setVelY(-player.getSpeed()/sqrt(2));
-	}
-	else if(state[SDL_SCANCODE_A] && state[SDL_SCANCODE_S]) //DOWN AND LEFT
-	{
-		player.setVelX(-player.getSpeed()/sqrt(2));
-		player.setVelY(player.getSpeed()/sqrt(2));
-	}
-	else if(state[SDL_SCANCODE_D] && state[SDL_SCANCODE_S]) //DOWN AND RIGHT
-	{
-		player.setVelX(player.getSpeed()/sqrt(2));
-		player.setVelY(player.getSpeed()/sqrt(2));
-	}
+		if(state[SDL_SCANCODE_A] && state[SDL_SCANCODE_W]) //UP AND LEFT
+		{
+			player.setVelX(-player.getSpeed()/sqrt(2));
+			player.setVelY(-player.getSpeed()/sqrt(2));
+		}
+		else if(state[SDL_SCANCODE_D] && state[SDL_SCANCODE_W]) //UP AND RIGHT
+		{
+			player.setVelX(player.getSpeed()/sqrt(2));
+			player.setVelY(-player.getSpeed()/sqrt(2));
+		}
+		else if(state[SDL_SCANCODE_A] && state[SDL_SCANCODE_S]) //DOWN AND LEFT
+		{
+			player.setVelX(-player.getSpeed()/sqrt(2));
+			player.setVelY(player.getSpeed()/sqrt(2));
+		}
+		else if(state[SDL_SCANCODE_D] && state[SDL_SCANCODE_S]) //DOWN AND RIGHT
+		{
+			player.setVelX(player.getSpeed()/sqrt(2));
+			player.setVelY(player.getSpeed()/sqrt(2));
+		}
 
-	if(state[SDL_SCANCODE_SPACE])
-	{
-		if(!player.getC4()->render)
+		if(state[SDL_SCANCODE_SPACE])
 		{
-			if(player.getC4()->ReadyToClick() && player.hasC4) {
-				player.PlaceC4(screen);
-				player.hasC4 = false;
-			}
-		}else 
-		{
-			if(player.getC4()->ReadyToClick())player.getC4()->Detonate();
-			for(int c  = 0; c < 5; c++)
+			if(!player.getC4()->render)
 			{
-				particles.push_back(std::unique_ptr<Particle>(new Particle(player.getX(),player.getY(),sin(c * 30), cos(c * 30),screen)));
+				if(player.getC4()->ReadyToClick() && player.hasC4) {
+					player.PlaceC4(screen);
+					player.hasC4 = false;
+				}
+			}else 
+			{
+				if(player.getC4()->ReadyToClick())player.getC4()->Detonate();
+				for(int c  = 0; c < 5; c++)
+				{
+					particles.push_back(std::unique_ptr<Particle>(new Particle(player.getX(),player.getY(),sin(c * 30), cos(c * 30),screen)));
+				}
 			}
 		}
 	}
@@ -385,14 +389,17 @@ void Main::handleInput4(Screen* screen)
 	xVel = cos(angle);
 	yVel = sin(angle);
 
-	if(SDL_GetMouseState(NULL,NULL)&SDL_BUTTON(1)) player.Shoot(1,xVel,yVel,screen);
-	else player.cock(1);
-	if(SDL_GetMouseState(NULL,NULL)&SDL_BUTTON(3)) player.Shoot(3,xVel,yVel,screen);
-	else player.cock(3);
-	if(!(SDL_GetMouseState(NULL,NULL)&SDL_BUTTON(1)) && !(SDL_GetMouseState(NULL,NULL)&SDL_BUTTON(3)))
+	if(!paused)
 	{
-		player.cock(1);
-		player.cock(3);
+		if(SDL_GetMouseState(NULL,NULL)&SDL_BUTTON(1)) player.Shoot(1,xVel,yVel,screen);
+		else player.cock(1);
+		if(SDL_GetMouseState(NULL,NULL)&SDL_BUTTON(3)) player.Shoot(3,xVel,yVel,screen);
+		else player.cock(3);
+		if(!(SDL_GetMouseState(NULL,NULL)&SDL_BUTTON(1)) && !(SDL_GetMouseState(NULL,NULL)&SDL_BUTTON(3)))
+		{
+			player.cock(1);
+			player.cock(3);
+		}
 	}
 }
 

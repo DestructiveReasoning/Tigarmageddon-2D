@@ -13,13 +13,17 @@
 
 Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOffset, int _gameWidth, int _gameHeight, CSprite* bullet) : 
 	GameObject(X,Y,csprite),
-	PaintBallGun_Damage(15),
-	Glock_Damage(9),
-	Skorpion_Damage(10),
+	PaintBallGun_Damage(20),
+	Glock_Damage(17),
+	Skorpion_Damage(20),
 	Spas_Damage(35),
-	GattlingGun_Damage(15),
+	GattlingGun_Damage(25),
 	hasC4(true),
-	dead(false)
+	dead(false),
+	audioRate(22050),
+	audioFormat(AUDIO_S16MSB),
+	audioChannels(2),
+	audioBuffers(4096)
 {
 	angle = 0.0;
 	lastTime = SDL_GetTicks();
@@ -34,7 +38,7 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	readyToShoot = true;
 	readyToShoot3 = true;
 	//Paintball Gun
-	clips.push_back(Magazine(60,60));
+	clips.push_back(Magazine(80,80));
 	//Glock
 	clips.push_back(Magazine(-1,-1));
 	//Skorpion
@@ -42,7 +46,7 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	//Gattling Gun
 	clips.push_back(Magazine(100,100));
 	//Spas
-	clips.push_back(Magazine(6,6));
+	clips.push_back(Magazine(12,12));
 	//Ballistic Knife
 	clips.push_back(Magazine(1,1));
 
@@ -59,6 +63,15 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	fg.a = 0x33;
 	initHUD();
 	speed = Default_Player_Speed;
+
+	/*
+	if(Mix_OpenAudio(audioRate,audioFormat,audioChannels,audioBuffers))
+	{
+		printf("Could not load audio device.\n");
+	}
+	*/
+
+	gunshot = Mix_LoadWAV("gunshot.wav");
 }
 
 void Player::Update()
@@ -159,12 +172,16 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 		//SEMI AUTO, SHOOTS WITH LEFT AND RIGHT
 		if(readyToShoot && *clips[PaintballGun].getAmmo() > 0 && mouseButton == 1)
 		{
+			Mix_HaltChannel(-1);
+			Mix_PlayChannel(-1,gunshot,1);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,PaintBallGun_Damage,screen->getRenderer()));
 			(*clips[PaintballGun].getAmmo())--;
 			readyToShoot = false;
 		}
 		if(readyToShoot3 && *clips[PaintballGun].getAmmo() > 0 && mouseButton == 3)
 		{
+			Mix_HaltChannel(-1);
+			Mix_PlayChannel(-1,gunshot,1);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,PaintBallGun_Damage,screen->getRenderer()));
 			(*clips[PaintballGun].getAmmo())--;
 			readyToShoot3 = false;
@@ -173,6 +190,8 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 	case Glock:
 		if(readyToShoot && mouseButton == 1)
 		{
+			Mix_HaltChannel(-1);
+			Mix_PlayChannel(-1,gunshot,1);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,Glock_Damage,screen->getRenderer()));
 			readyToShoot = false;
 		}
@@ -181,6 +200,8 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 		now = SDL_GetTicks();
 		if(now - lastTime >= double(1/SKORPION_FIRE_RATE) && *clips[Skorpion].getAmmo() > 0 && mouseButton == 1)
 		{
+			Mix_HaltChannel(-1);
+			Mix_PlayChannel(-1,gunshot,1);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,Skorpion_Damage,screen->getRenderer()));
 			(*clips[Skorpion].getAmmo())--;
 			lastTime = SDL_GetTicks();
@@ -190,6 +211,8 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 		now = SDL_GetTicks();
 		if(now - lastTime >= double(1/GATTLINGGUN_FIRE_RATE) && *clips[GattlingGun].getAmmo() > 0 && mouseButton == 1)
 		{
+			Mix_HaltChannel(-1);
+			Mix_PlayChannel(-1,gunshot,0);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,GattlingGun_Damage,screen->getRenderer()));
 			(*clips[GattlingGun].getAmmo())--;
 			lastTime = SDL_GetTicks();
@@ -436,6 +459,9 @@ void Player::setWeapon(int w)
 	}else if(weapon == Glock || weapon == Skorpion)
 	{
 		speed = Default_Player_Speed + 0.5;
+	}else if(weapon == Ballistic_Knife)
+	{
+		speed = Default_Player_Speed + 0.8;
 	}
 	else speed = Default_Player_Speed;
 }
@@ -622,6 +648,7 @@ Player::~Player(void)
 	//SDL_DestroyTexture(waveText);
 	TTF_Quit();
 	std::cout << "Done." << std::endl;
+	Mix_FreeChunk(gunshot);
 }
 
 const int Player::Default_Player_Speed = 2;
