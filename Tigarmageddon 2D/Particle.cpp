@@ -14,7 +14,7 @@ Particle::Particle(float X, float Y, float velx, float vely, Screen* screen) :
 	srand(time(NULL));
 
 	Uint32 r = rand() % 0xFF000000;
-	Uint32 g = rand() % r;
+	Uint32 g = rand() % r + 1;
 	Uint32 b = rand() % (g/2);
 	Uint32 a = rand() % 0x000000FF;
 

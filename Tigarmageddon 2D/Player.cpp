@@ -17,7 +17,7 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	Glock_Damage(17),
 	Skorpion_Damage(20),
 	Spas_Damage(35),
-	GattlingGun_Damage(25),
+	GattlingGun_Damage(22),
 	hasC4(true),
 	dead(false),
 	audioRate(22050),
@@ -243,7 +243,9 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 					if(onCollision(Main::stones[j],-velX *c, -velY * c))
 					{
 						x -= c * velX;
+						*xOffset += c * velX;
 						y -= c * velY;
+						*yOffset += c * velY;
 						hit = true;
 						break;
 					}
@@ -253,7 +255,9 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 				if(c == 20)
 				{
 					x -= 20*velX;
+					*xOffset += 20 * velX;
 					y -= 20*velY; 
+					*yOffset += 20 * velY;
 				}
 			}
 			readyToShoot = false;
