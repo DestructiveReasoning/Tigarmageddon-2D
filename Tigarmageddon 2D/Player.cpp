@@ -11,6 +11,10 @@
 #define GATTLINGGUN_FIRE_RATE 0.025
 #define SPAS_ANGLE_OFFSET 0.1;
 
+#define BULLET_MASS 0.5
+#define PLAYER_MASS 70
+#define RECOIL BULLET_MASS*PLAYER_MASS
+
 Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOffset, int _gameWidth, int _gameHeight, CSprite* bullet) : 
 	GameObject(X,Y,csprite),
 	PaintBallGun_Damage(20),
@@ -236,7 +240,29 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 			//y -= 20*velY;
 			bool hit = false;
 			int c;
-			for(c = 0; c <= 20; c++)
+			bool colliding = false;
+			for(int c = 0; c < Main::stones.size(); c++)
+			{
+				if(onCollision(Main::stones[c],-RECOIL*velX,0))
+				{
+					colliding = true;	
+					break;
+				}
+			}
+
+			if(!colliding) move2(-RECOIL*velX,0);
+
+			colliding = false;
+			for(int c = 0; c < Main::stones.size(); c++)
+			{
+				if(onCollision(Main::stones[c],0,-RECOIL*velY))
+				{
+					colliding = true;	
+					break;
+				}
+			}
+			if(!colliding) move2(0,-RECOIL*velY);
+			for(c = 0; c <= 0; c++)             //CHANGED 20 to 0 TO TEST ***NOW USELESS CODE
 			{
 				for(int j = 0; j < Main::stones.size(); j++)
 				{

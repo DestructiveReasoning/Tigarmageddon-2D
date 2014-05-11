@@ -24,6 +24,7 @@ Main::Main(int width, int height) :
 	wave = 1;
 	stones.clear();
 	tigers.clear();
+	tgs.clear();
 	killcount = 0;
 	paused = false;
 	levelWidth = 3000;
@@ -108,11 +109,16 @@ Main::Main(int width, int height) :
 	}
 
 	//tigers.push_back(std::unique_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,300,300,&xOffset,&yOffset,&player)));
-	tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,100,100,&xOffset,&yOffset,&player)));
+	//tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,100,100,&xOffset,&yOffset,&player)));
 
 	for(auto c = 0; c < 1; c++)
 	{
 		ammoBoxes.push_back(std::shared_ptr<AmmoBox>(new AmmoBox(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer())));
+	}
+	
+	for(int c = 0; c < 4; c++)
+	{
+		tgs.push_back(std::shared_ptr<TigerGenerator>(new TigerGenerator(rand()%(levelWidth/32) * 32.0f,rand()%(levelHeight/32) * 32.0f,&xOffset,&yOffset,screen->getRenderer(), &player)));
 	}
 }
 
@@ -187,6 +193,13 @@ void Main::gameLoop(void)
 			ammoBoxes[c]->Render();
 		}
 
+		for(int c = 0; c < tgs.size(); c++)
+		{
+			tgs[c]->Update();
+			tgs[c]->Render();
+		}
+		printf("%d\n",tigers.size());
+		
 		player.Render(xOffset,yOffset);
 
 		for(int c = 0; c < tigers.size(); c++)
@@ -199,7 +212,7 @@ void Main::gameLoop(void)
 				tigers[c--] = tigers.back();
 				tigers.pop_back();
 				killcount++;
-				if(killcount < 20)
+				if(killcount < 0)
 				{
 					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player)));
 					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player)));
@@ -424,5 +437,6 @@ GameObject* a[] = {nullptr};
 std::vector<GameObject*> Main::stones;
 std::vector<std::shared_ptr<Tiger>> Main::tigers;
 std::vector<std::shared_ptr<AmmoBox>> Main::ammoBoxes;
+std::vector<std::shared_ptr<TigerGenerator>> Main::tgs;
 int Main::killcount = 0;
 bool Main::paused = false;

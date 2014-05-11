@@ -7,6 +7,7 @@
 #include "Tiger.h"
 #include "Particle.h"
 #include "AmmoBox.h"
+#include "TigerGenerator.h"
 
 class Main
 {
@@ -35,6 +36,7 @@ public:
 	std::vector<std::unique_ptr<Particle>> particles;
 
 	static std::vector<std::shared_ptr<AmmoBox>> ammoBoxes;
+	static std::vector<std::shared_ptr<TigerGenerator>> tgs;
 
 	std::vector<std::shared_ptr<CSprite>> normalTiger; //No need to initialize
 
@@ -45,6 +47,8 @@ public:
 	static const int ExplosionRadius;
 	
 	bool restart;
+
+	static CSprite* tigerGeneratorSprite;
 
 private:
 	bool running;
