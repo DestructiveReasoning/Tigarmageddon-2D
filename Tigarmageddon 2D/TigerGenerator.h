@@ -4,7 +4,23 @@
 #include "GameObject.h"
 #include "Tiger.h"
 
+#define POSITION_BUFFER 300
+
 class Main;
+
+typedef struct Position;
+
+struct Position
+{
+	int x;
+	int y;
+
+	bool operator==(Position p)
+	{
+		if(abs(x - p.x) <= POSITION_BUFFER && abs(y - p.y) <= POSITION_BUFFER) return true;
+		return false;
+	}
+};
 
 class TigerGenerator : public GameObject
 {
@@ -14,6 +30,8 @@ public:
 
 	void Render();
 	void Update();
+
+	Position pos;
 
 	static const int Probability;
 

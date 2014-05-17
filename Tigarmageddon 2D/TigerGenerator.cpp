@@ -13,6 +13,9 @@ TigerGenerator::TigerGenerator(float X, float Y, float *_xOffset, float *_yOffse
 	srand(time(NULL));
 	spritevector.push_back(std::shared_ptr<CSprite>(new CSprite(renderer,"tigerclosed.png",x,y,32,80)));
 	spritevector.push_back(std::shared_ptr<CSprite>(new CSprite(renderer,"tigerextended.png",x,y,32,80)));
+
+	pos.x = X;
+	pos.y = Y;
 }
 
 void TigerGenerator::Update()
@@ -34,4 +37,4 @@ TigerGenerator::~TigerGenerator(void)
 	delete sprite;
 }
 
-const int TigerGenerator::Probability = 1000;
+const int TigerGenerator::Probability = 500;

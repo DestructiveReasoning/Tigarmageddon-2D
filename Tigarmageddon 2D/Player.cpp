@@ -24,11 +24,21 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	GattlingGun_Damage(22),
 	hasC4(true),
 	dead(false),
-	audioRate(22050),
-	audioFormat(AUDIO_S16MSB),
+	audioRate(44100),
+	audioFormat(MIX_DEFAULT_FORMAT),
 	audioChannels(2),
-	audioBuffers(4096)
+	audioBuffers(1024)
 {
+	/**
+	POSITION OPERATOR TEST
+	*/
+	Position p1, p2;
+	p1.x = 0;
+	p1.y = 0;
+	p2.x = 100;
+	p2.y = 100;
+	if(p1 == p2) printf("*****POSITION TEST: TRUE\n");
+	else         printf("*****POSITION TEST: FALSE\n");
 	angle = 0.0;
 	lastTime = SDL_GetTicks();
 	now = SDL_GetTicks();
@@ -75,7 +85,9 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	}
 	*/
 
+	Mix_AllocateChannels(16);
 	gunshot = Mix_LoadWAV("gunshot.wav");
+	spasShot = Mix_LoadWAV("spasShot.wav");
 }
 
 void Player::Update()
@@ -177,7 +189,7 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 		if(readyToShoot && *clips[PaintballGun].getAmmo() > 0 && mouseButton == 1)
 		{
 			Mix_HaltChannel(-1);
-			Mix_PlayChannel(-1,gunshot,1);
+			Mix_PlayChannel(-1,gunshot,0);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,PaintBallGun_Damage,screen->getRenderer()));
 			(*clips[PaintballGun].getAmmo())--;
 			readyToShoot = false;
@@ -185,7 +197,7 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 		if(readyToShoot3 && *clips[PaintballGun].getAmmo() > 0 && mouseButton == 3)
 		{
 			Mix_HaltChannel(-1);
-			Mix_PlayChannel(-1,gunshot,1);
+			Mix_PlayChannel(-1,gunshot,0);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,PaintBallGun_Damage,screen->getRenderer()));
 			(*clips[PaintballGun].getAmmo())--;
 			readyToShoot3 = false;
@@ -195,7 +207,7 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 		if(readyToShoot && mouseButton == 1)
 		{
 			Mix_HaltChannel(-1);
-			Mix_PlayChannel(-1,gunshot,1);
+			Mix_PlayChannel(-1,gunshot,0);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,Glock_Damage,screen->getRenderer()));
 			readyToShoot = false;
 		}
@@ -205,7 +217,7 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 		if(now - lastTime >= double(1/SKORPION_FIRE_RATE) && *clips[Skorpion].getAmmo() > 0 && mouseButton == 1)
 		{
 			Mix_HaltChannel(-1);
-			Mix_PlayChannel(-1,gunshot,1);
+			Mix_PlayChannel(-1,gunshot,0);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,Skorpion_Damage,screen->getRenderer()));
 			(*clips[Skorpion].getAmmo())--;
 			lastTime = SDL_GetTicks();
@@ -225,6 +237,8 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 	case Spas:
 		if(readyToShoot && *clips[weapon].getAmmo() > 0 && mouseButton == 1)
 		{
+			//Mix_HaltChannel(-1);
+			Mix_PlayChannel(-1,spasShot,0);
 			double angle = atan2(velY,velX);
 			double leftAngle = angle - SPAS_ANGLE_OFFSET;
 			float leftVelX = cos(leftAngle) * BULLET_SPEED;
@@ -679,6 +693,7 @@ Player::~Player(void)
 	TTF_Quit();
 	std::cout << "Done." << std::endl;
 	Mix_FreeChunk(gunshot);
+	Mix_FreeChunk(spasShot);
 }
 
 const int Player::Default_Player_Speed = 2;

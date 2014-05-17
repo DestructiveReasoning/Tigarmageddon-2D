@@ -34,6 +34,17 @@ void BallisticKnife::Update(void)
 			Main::tigers[c]->Damage(damage);
 		}
 	}
+
+	for(auto c = 0; c < Main::tgs.size(); c++)
+	{
+		if(onCollision(Main::tgs[c].get()))
+		{
+			destroy = true;
+			Main::tgs[c] = Main::tgs.back();
+			Main::tgs.pop_back();
+			printf("Destroyed Tiger Generator\n");
+		}
+	}
 }
 
 void BallisticKnife::Render(void)

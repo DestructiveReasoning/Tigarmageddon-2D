@@ -3,6 +3,7 @@
 #include "destructive_reasoning.h"
 #include "Main.h"
 #include "MainMenu.h"
+#include "TimedSplashScreen.h"
 
 #define WIDTH 800
 #define HEIGHT (WIDTH * 3/4)
@@ -34,6 +35,8 @@
 int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
+	TimedSplashScreen* splash = new TimedSplashScreen("PoweredByDestructiveReasoning.png",WIDTH,HEIGHT,4000);
+	delete splash;
 	MainMenu* mainMenu = new MainMenu(WIDTH,HEIGHT);
 	mainMenu->menuLoop();
 	delete mainMenu;

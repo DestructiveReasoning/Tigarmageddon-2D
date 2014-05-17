@@ -34,7 +34,7 @@ Main::Main(int width, int height) :
 	w = width;
 	h = height;
 
-	screen = new Screen(w,h,&running);
+	screen = new Screen(w,h,&running,true);
 	//player.setScreen(screen);
 	player.setRenderer(screen->getRenderer());
 	player.init(screen->getRenderer());
@@ -116,9 +116,32 @@ Main::Main(int width, int height) :
 		ammoBoxes.push_back(std::shared_ptr<AmmoBox>(new AmmoBox(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer())));
 	}
 	
+	srand(time(NULL));
+
+	tgs.push_back(std::shared_ptr<TigerGenerator>(new TigerGenerator(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer(),&player)));
+
 	for(int c = 0; c < 4; c++)
 	{
-		tgs.push_back(std::shared_ptr<TigerGenerator>(new TigerGenerator(rand()%(levelWidth/32) * 32.0f,rand()%(levelHeight/32) * 32.0f,&xOffset,&yOffset,screen->getRenderer(), &player)));
+		Position p;
+		for(int j = 0; j < tgs.size(); j++)
+		{
+			do
+			{
+				p.x = rand()%levelWidth;
+				p.y = rand()%levelHeight;
+			}
+			while(p == tgs[j].get()->pos);
+		}
+		for(int j = 0; j < stones.size(); j++)
+		{
+			Position sp = {stones[j]->getX(),stones[j]->getY()};
+			while(p == sp)
+			{
+				p.x = rand()%levelWidth;
+				p.y = rand()%levelHeight;
+			}
+		}
+		tgs.push_back(std::shared_ptr<TigerGenerator>(new TigerGenerator(p.x,p.y,&xOffset,&yOffset,screen->getRenderer(), &player)));
 	}
 }
 
@@ -198,7 +221,8 @@ void Main::gameLoop(void)
 			tgs[c]->Update();
 			tgs[c]->Render();
 		}
-		printf("%d\n",tigers.size());
+		//printf("%d\n",tigers.size());
+		//printf("%d\n",tgs.size());
 		
 		player.Render(xOffset,yOffset);
 

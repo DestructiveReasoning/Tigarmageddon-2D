@@ -86,6 +86,7 @@
     <ClCompile Include="Stone.cpp" />
     <ClCompile Include="Tiger.cpp" />
     <ClCompile Include="TigerGenerator.cpp" />
+    <ClCompile Include="TimedSplashScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AmmoBox.h" />
@@ -104,6 +105,7 @@
     <ClInclude Include="Stone.h" />
     <ClInclude Include="Tiger.h" />
     <ClInclude Include="TigerGenerator.h" />
+    <ClInclude Include="TimedSplashScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

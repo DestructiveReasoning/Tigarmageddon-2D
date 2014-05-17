@@ -5,7 +5,7 @@
 class Screen
 {
 public:
-	Screen(int width, int height, bool* running);
+	Screen(int width, int height, bool* running,bool border);
 	~Screen(void);
 	SDL_Window* getWindow(void);
 	SDL_Renderer* getRenderer(void);

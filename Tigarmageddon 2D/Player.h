@@ -133,6 +133,7 @@ private:
 	int audioBuffers;
 
 	Mix_Chunk* gunshot;
+	Mix_Chunk* spasShot;
 
 	bool dead;
 };

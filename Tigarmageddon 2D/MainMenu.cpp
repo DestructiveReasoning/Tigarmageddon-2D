@@ -5,12 +5,12 @@
 #define STARTINGPOINT_Y 427
 
 MainMenu::MainMenu(int _width, int _height) :
-	audioRate(22050),
-	audioFormat(AUDIO_S16MSB),
+	audioRate(44100),
+	audioFormat(AUDIO_S16SYS),
 	audioChannels(2),
-	audioBuffers(4096)
+	audioBuffers(1024)
 {
-	screen = new Screen(_width,_height,&running);
+	screen = new Screen(_width,_height,&running,true);
 	width = _width;
 	height = _height;
 
@@ -28,7 +28,8 @@ MainMenu::MainMenu(int _width, int _height) :
 	}
 
 	themeSong = nullptr;
-	themeSong = Mix_LoadMUS("Arsis-My_Oath_To_Madness_8_bit_Remix_.wav");
+	//themeSong = Mix_LoadMUS("Arsis-My_Oath_To_Madness_8_bit_Remix_.wav");
+	themeSong = Mix_LoadMUS("AmonAmarthWarOfTheGods.mp3");
 	if(themeSong == nullptr)
 	{
 		printf("Could not open music file.\nMake sure it's in OGG format.\n");

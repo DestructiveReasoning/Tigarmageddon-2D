@@ -1,10 +1,11 @@
 #include "Screen.h"
 
 
-Screen::Screen(int width, int height, bool* running)
+Screen::Screen(int width, int height, bool* running, bool border)
 {
 	screen = nullptr;
-	screen = SDL_CreateWindow("Tigarmageddon 2D",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN);
+	if(border)screen = SDL_CreateWindow("Tigarmageddon 2D",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN|SDL_WINDOW_INPUT_GRABBED);
+	else screen = SDL_CreateWindow("Tigarmageddon 2D",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN|SDL_WINDOW_BORDERLESS);
 	if(screen == nullptr)
 	{
 		std:: cout << "Error creating Window" << std::endl;
