@@ -99,7 +99,7 @@ Main::Main(int width, int height) :
 		stones.push_back(new GameObject(float(levelWidth - 32),float(c * 32),stoneSprite));
 	}
 
-	srand(time(NULL));
+	//srand(time(NULL));
 	for(int c = 0; c < number_of_stones; c++)
 	{
 		float xx = float(rand()%levelWidth);
@@ -118,30 +118,43 @@ Main::Main(int width, int height) :
 	
 	srand(time(NULL));
 
-	tgs.push_back(std::shared_ptr<TigerGenerator>(new TigerGenerator(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer(),&player)));
+	//tgs.push_back(std::shared_ptr<TigerGenerator>(new TigerGenerator(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer(),&player)));
 
 	for(int c = 0; c < 4; c++)
 	{
-		Position p;
+		Position p = {rand()%levelWidth, rand()%levelHeight};
 		for(int j = 0; j < tgs.size(); j++)
 		{
 			do
 			{
 				p.x = rand()%levelWidth;
 				p.y = rand()%levelHeight;
+				for(int q = 0; q < Main::stones.size(); q++)
+				{
+					Position pq = {Main::stones[q]->getX(),Main::stones[q]->getY()};
+					while(p == pq)
+					{
+						p.x = rand()%levelWidth;
+						p.y = rand()%levelHeight;
+					}
+				}
 			}
-			while(p == tgs[j].get()->pos);
+			while((p == tgs[j].get()->pos));
 		}
-		for(int j = 0; j < stones.size(); j++)
+		if(tgs.size() == 0)
 		{
-			Position sp = {stones[j]->getX(),stones[j]->getY()};
-			while(p == sp)
+			for(int q = 0; q < Main::stones.size(); q++)
 			{
-				p.x = rand()%levelWidth;
-				p.y = rand()%levelHeight;
+				Position pq = {Main::stones[q]->getX(), Main::stones[q]->getY()};
+				while(p == pq)
+				{
+					p.x = rand()%levelWidth;
+					p.y = rand()%levelHeight;
+				}
 			}
 		}
 		tgs.push_back(std::shared_ptr<TigerGenerator>(new TigerGenerator(p.x,p.y,&xOffset,&yOffset,screen->getRenderer(), &player)));
+		printf("[TIGER GEN POSITION] %d, %d\n",p.x,p.y);
 	}
 }
 

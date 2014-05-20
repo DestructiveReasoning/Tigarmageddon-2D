@@ -35,7 +35,7 @@
 int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	TimedSplashScreen* splash = new TimedSplashScreen("PoweredByDestructiveReasoning.png",WIDTH,HEIGHT,4000);
+	TimedSplashScreen* splash = new TimedSplashScreen("PoweredByDestructiveReasoning.png",640,480,5000);
 	delete splash;
 	MainMenu* mainMenu = new MainMenu(WIDTH,HEIGHT);
 	mainMenu->menuLoop();
