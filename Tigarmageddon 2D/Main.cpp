@@ -5,6 +5,8 @@
 #include <time.h>
 #include <cstdlib>
 #include "MainMenu.h"
+#include <SDL_mouse.h>
+#include <SDL_main.h>
 
 #define MAX_KILL_COUNT 5
 #define STARTING_POINT_X 300
@@ -70,16 +72,19 @@ Main::Main(int width, int height) :
 	cursor = SDL_CreateColorCursor(cursorSurface,8,8);
 	SDL_SetCursor(cursor);
 
+	swnow = SDL_GetTicks();
+	swlast = SDL_GetTicks();
+
 	mouseX = mouseY = 0;
 	player.setSprite(playerSprite);
 	player.setPos(float(width/2 - player.getSprite()->getWidth()/2), float(height/2 - player.getSprite()->getHeight()/2));
 	player.setSpeed(2);
 	player.AddWeaponSprite(paintBallGun);
-	player.AddWeaponSprite(glock);
 	player.AddWeaponSprite(skorpion);
-	player.AddWeaponSprite(gatlingGun);
-	player.AddWeaponSprite(spas);
 	player.AddWeaponSprite(emptySprite);
+	player.AddWeaponSprite(spas);
+	player.AddWeaponSprite(gatlingGun);
+	player.AddWeaponSprite(glock);
 
 	wave = 1;
 
@@ -251,8 +256,8 @@ void Main::gameLoop(void)
 				killcount++;
 				if(killcount < 0)
 				{
-					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player)));
-					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player)));
+					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player,0)));
+					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player,1)));
 				}
 				ammoBoxes.push_back(std::shared_ptr<AmmoBox>(new AmmoBox(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer())));
 			}
@@ -274,12 +279,6 @@ void Main::gameLoop(void)
 			running = false;
 			std::cout << "QUIT" << std::endl;
 			return;
-		}
-
-		for(int c = 0; c < particles.size(); c++)
-		{
-			//particles[c]->Update();
-			//particles[c]->Render();
 		}
 
 		SDL_Rect r;
@@ -322,6 +321,7 @@ void Main::gameLoop(void)
 		SDL_SetWindowTitle(screen->getWindow(),s.str().c_str());
 
 		screen->display();
+		if(tgs.size() == 0) printf("*****NO MORE TIGER GENERATORS*****\n");
 	}
 }
 
@@ -330,6 +330,7 @@ void Main::handleInput4(Screen* screen)
 	state = SDL_GetKeyboardState(NULL);
 	if(!paused)
 	{
+		swnow = SDL_GetTicks();
 		if(state[SDL_SCANCODE_A]) player.setVelX(-player.getSpeed());
 		if(state[SDL_SCANCODE_D]) player.setVelX(player.getSpeed());
 		if(!state[SDL_SCANCODE_A] && !state[SDL_SCANCODE_D]) player.setVelX(0);
@@ -342,6 +343,16 @@ void Main::handleInput4(Screen* screen)
 		if(state[SDL_SCANCODE_3]) player.setWeapon(player.Ballistic_Knife);
 		if(state[SDL_SCANCODE_4]) player.setWeapon(player.Spas);
 		if(state[SDL_SCANCODE_5]) player.setWeapon(player.GattlingGun);
+		if(state[SDL_SCANCODE_Q] && swnow - swlast >= 150) 
+		{
+				player.setWeapon(player.getWeapon() -1);
+				swlast = SDL_GetTicks();
+		}
+		if(state[SDL_SCANCODE_E] && swnow - swlast >= 150)
+		{
+				player.setWeapon(player.getWeapon() +1);
+				swlast = SDL_GetTicks();
+		}
 
 		if(state[SDL_SCANCODE_A] && state[SDL_SCANCODE_W]) //UP AND LEFT
 		{

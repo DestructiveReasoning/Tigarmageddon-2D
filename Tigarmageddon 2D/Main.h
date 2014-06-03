@@ -104,6 +104,8 @@ private:
 	CSprite* paw;
 	Uint32 now;
 	Uint32 last;
+	Uint32 swnow;
+	Uint32 swlast;
 
 	Uint32 deadtimer;
 

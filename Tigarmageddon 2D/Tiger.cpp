@@ -1,7 +1,7 @@
 #include "Tiger.h"
 #include "Main.h"
 
-Tiger::Tiger(SDL_Renderer* _renderer,std::vector<std::shared_ptr<CSprite>> _spriteVector,float X, float Y, float* _xOffset, float* _yOffset, Player* _player) : 
+Tiger::Tiger(SDL_Renderer* _renderer,std::vector<std::shared_ptr<CSprite>> _spriteVector,float X, float Y, float* _xOffset, float* _yOffset, Player* _player, const int tiger_type) : 
 	GameObject(X,Y,_spriteVector[0].get()),
 	xOffset(_xOffset),
 	yOffset(_yOffset),
@@ -10,14 +10,35 @@ Tiger::Tiger(SDL_Renderer* _renderer,std::vector<std::shared_ptr<CSprite>> _spri
 	renderer(_renderer),
 	spriteVector(_spriteVector)
 {
-	speed = Player::Default_Player_Speed * NORMAL_TIGER_SPEED_CONSTANT;
+	switch(tiger_type)
+	{
+	case TIGER_NORMAL:
+		rect.w = 16;
+		rect.h = 16;
+		health = 100;
+		speed = Player::Default_Player_Speed * NORMAL_TIGER_SPEED_CONSTANT;
+		break;
+	case TIGER_SIBERIAN:
+		rect.w = 12;
+		rect.h = 12;
+		health = 70;
+		speed = Player::Default_Player_Speed * SIBERIAN_TIGER_SPEED;
+		break;
+	case TIGER_SUMATRAN:
+		rect.w = 20;
+		rect.h = 20;
+		health = 130;
+		speed = Player::Default_Player_Speed * SUMATRAN_TIGER_SPEED;
+		break;
+	default:
+		printf("INVALID TIGER TYPE: %d\n",tiger_type);
+		break;
+	}
+
 	last = SDL_GetTicks();
 	now = SDL_GetTicks();
 	rect.x = int(x);
 	rect.y = int(y);
-	rect.w = 16;
-	rect.h = 16;
-	health = 100;
 	col = false;
 }
 
@@ -144,3 +165,5 @@ Tiger::~Tiger(void)
 }
 
 const float Tiger::NORMAL_TIGER_SPEED_CONSTANT = 1.2;
+const float Tiger::SIBERIAN_TIGER_SPEED = 1.4;
+const float Tiger::SUMATRAN_TIGER_SPEED = 1.05;

@@ -34,7 +34,8 @@ public:
 
 	void cock(int mouseButton);
 
-	enum Weapon{PaintballGun,Glock,Skorpion,GattlingGun,Spas,Ballistic_Knife};
+	//enum Weapon{PaintballGun,Glock,Skorpion,GattlingGun,Spas,Ballistic_Knife,Weapon_END};
+	enum Weapon{PaintballGun,Skorpion,Ballistic_Knife,Spas,GattlingGun,Glock,Weapon_END};
 
 	void initHUD();
 	void renderHUD();
@@ -62,6 +63,8 @@ public:
 
 	bool isDead(void);
 	void kill(void);
+
+	int getWeapon();
 
 private:
 	float* xOffset;

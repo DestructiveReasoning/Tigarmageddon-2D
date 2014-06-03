@@ -11,7 +11,7 @@
 #define GATTLINGGUN_FIRE_RATE 0.025
 #define SPAS_ANGLE_OFFSET 0.1;
 
-#define BULLET_MASS 0.5
+#define BULLET_MASS 0.75
 #define PLAYER_MASS 70
 #define RECOIL BULLET_MASS*PLAYER_MASS
 
@@ -53,23 +53,23 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	readyToShoot3 = true;
 	//Paintball Gun
 	clips.push_back(Magazine(80,80));
-	//Glock
-	clips.push_back(Magazine(-1,-1));
 	//Skorpion
 	clips.push_back(Magazine(60,60));
-	//Gattling Gun
-	clips.push_back(Magazine(100,100));
-	//Spas
-	clips.push_back(Magazine(12,12));
 	//Ballistic Knife
 	clips.push_back(Magazine(1,1));
+	//Spas
+	clips.push_back(Magazine(12,12));
+	//Gattling Gun
+	clips.push_back(Magazine(100,100));
+	//Glock
+	clips.push_back(Magazine(-1,-1));
 
 	weaponNames.push_back("Paintball Gun");
-	weaponNames.push_back("Glock");
 	weaponNames.push_back("Skorpion SMG");
-	weaponNames.push_back("Gatling Gun");
-	weaponNames.push_back("Spas 12");
 	weaponNames.push_back("Ballistic Knife");
+	weaponNames.push_back("Spas 12");
+	weaponNames.push_back("Gatling Gun");
+	weaponNames.push_back("Glock");
 
 	fg.r = 0xdd;
 	fg.g = 0xdd;
@@ -488,6 +488,8 @@ void Player::move(float velX, float velY)
 
 void Player::setWeapon(int w)
 {
+	if (w < 0) w = Weapon_END - 1;
+	if (w >= Weapon_END) w = 0;
 	weapon = Weapon(w);
 	if(w == GattlingGun || w == Ballistic_Knife)
 	{
@@ -663,6 +665,11 @@ bool Player::isDead(void)
 void Player::kill(void)
 {
 	dead = true;
+}
+
+int Player::getWeapon()
+{
+	return (int)weapon;
 }
 
 Player::~Player(void)
