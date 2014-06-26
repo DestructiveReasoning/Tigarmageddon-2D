@@ -16,7 +16,7 @@ class Main;
 class Player : public GameObject
 {
 public:
-	Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOffset, int _gameWidth, int _gameHeight, CSprite* bulletSprite);
+	Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOffset, int _gameWidth, int _gameHeight, CSprite* bulletSprite, int lvl);
 	~Player(void);
 
 	void Update();

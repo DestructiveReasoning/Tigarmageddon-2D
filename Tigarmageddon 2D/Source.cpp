@@ -4,6 +4,7 @@
 #include "Main.h"
 #include "MainMenu.h"
 #include "TimedSplashScreen.h"
+#include "Menu.h"
 
 #define WIDTH 800
 #define HEIGHT (WIDTH * 3/4)

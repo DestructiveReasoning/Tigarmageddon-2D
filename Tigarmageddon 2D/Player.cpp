@@ -15,9 +15,9 @@
 #define PLAYER_MASS 70
 #define RECOIL BULLET_MASS*PLAYER_MASS
 
-Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOffset, int _gameWidth, int _gameHeight, CSprite* bullet) : 
+Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOffset, int _gameWidth, int _gameHeight, CSprite* bullet, int lvl) : 
 	GameObject(X,Y,csprite),
-	PaintBallGun_Damage(20),
+	PaintBallGun_Damage(25),
 	Glock_Damage(17),
 	Skorpion_Damage(20),
 	Spas_Damage(35),
@@ -54,7 +54,7 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	//Paintball Gun
 	clips.push_back(Magazine(80,80));
 	//Skorpion
-	clips.push_back(Magazine(60,60));
+	clips.push_back(Magazine(40,40));
 	//Ballistic Knife
 	clips.push_back(Magazine(1,1));
 	//Spas
@@ -71,10 +71,24 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	weaponNames.push_back("Gatling Gun");
 	weaponNames.push_back("Glock");
 
-	fg.r = 0xdd;
-	fg.g = 0xdd;
-	fg.b = 0xff;
-	fg.a = 0x33;
+	switch(lvl)
+	{
+	case Main::Field:
+		fg.r = 0xdd;
+		fg.g = 0xdd;
+		fg.b = 0xff;
+		fg.a = 0x33;
+		break;
+	case Main::Siberia:
+		fg.r = 0x44;
+		fg.g = 0x44;
+		fg.b = 0xff;
+		fg.a = 0x33;
+		break;
+	default:
+		printf("Invalid Level for Color Scheme\n");
+		break;
+	}
 	initHUD();
 	speed = Default_Player_Speed;
 

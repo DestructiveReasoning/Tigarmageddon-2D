@@ -14,15 +14,16 @@
 #define GAP_SIZE 65
 #define DEATH_LENGTH 5000
 
-Main::Main(int width, int height) : 
+Main::Main(int width, int height, int _lvl) : 
 	xOffset(0), 
 	yOffset(0), 
-	player(400,400,playerSprite, &xOffset, &yOffset,width,height,bullet),
+	player(400,400,playerSprite, &xOffset, &yOffset,width,height,bullet,_lvl),
 	number_of_stones(5),
 	restart(true),
 	showControls(false),
 	deadtimer(-1)
 {
+	lvl = _lvl;
 	wave = 1;
 	stones.clear();
 	tigers.clear();
@@ -44,7 +45,7 @@ Main::Main(int width, int height) :
 	grassSprite = new CSprite(screen->getRenderer(),"grassTexture0.bmp",0,0,width,height);
 	playerSprite = new CSprite(screen->getRenderer(),"testballwhite.png",120,120,32,32);
 	gradient = new CSprite(screen->getRenderer(),"gradient.png",0,0,1200,1200);
-	land = new CSprite(screen->getRenderer(),"grassMapTexture0.png",0,0,1000,1000);
+	//land = new CSprite(screen->getRenderer(),"grassMapTexture0.png",0,0,1000,1000);
 	bullet = new CSprite(screen->getRenderer(),"bullet8.png",100,100,8,8);
 	paintBallGun = new CSprite(screen->getRenderer(),"paintballGun.png",120,120,24,56);
 	glock = new CSprite(screen->getRenderer(),"glock.png",120,120,24,56);
@@ -52,13 +53,28 @@ Main::Main(int width, int height) :
 	gatlingGun = new CSprite(screen->getRenderer(), "gatlingGun.png",120,120,24,56);
 	spas = new CSprite(screen->getRenderer(),"spas12.png",120,120,48,56);
 	emptySprite = new CSprite(screen->getRenderer(),"emptySprite.png",120,120,1,1);
-	stoneSprite = new CSprite(screen->getRenderer(),"stoneTexture.png",0,0,32,32);
+	//stoneSprite = new CSprite(screen->getRenderer(),"stoneTexture.png",0,0,32,32);
 	pauseMenuSprite = new CSprite(screen->getRenderer(),"pauseMenu.png",0,0,250,350);
 	c4Sprite = new CSprite(screen->getRenderer(), "c4.png", 0,0,24,24);
 	paw = new CSprite(screen->getRenderer(),"tigerpaw.png",STARTING_POINT_X,STARTING_POINT_Y,40,40);
 	ammoBoxSprite = new CSprite(screen->getRenderer(),"AmmoBox.png",0,0,32,32);
-	bloodSprite = new CSprite(screen->getRenderer(),"Blood.png",0,0,800,800);
+	bloodSprite = new CSprite(screen->getRenderer(),"Blood.png",0,0,w,h);
 	youDied = new CSprite(screen->getRenderer(),"YouDied.png",0,0,600,200);
+
+	//SET LEVEL-SPECIFIC SPRITES
+	switch(lvl)
+	{
+	case Field:
+		stoneSprite = new CSprite(screen->getRenderer(),"stoneTexture.png",0,0,32,32);
+		land = new CSprite(screen->getRenderer(),"grassMapTexture0.png",0,0,1000,1000);
+		break;
+	case Siberia:
+		stoneSprite = new CSprite(screen->getRenderer(),"ice.png",0,0,32,32);
+		land = new CSprite(screen->getRenderer(),"snow0.png",0,0,1000,1000);
+	default:
+		printf("Invalid Level\n");
+		break;
+	}
 
 	std::shared_ptr<CSprite> normalTigerExtended(new CSprite(screen->getRenderer(),"tigerextended.png",100,100,32,80));
 	std::shared_ptr<CSprite> normalTigerClosed  (new CSprite(screen->getRenderer(),"tigerclosed.png",100,100,32,80));
@@ -91,11 +107,7 @@ Main::Main(int width, int height) :
 	lmb = false;
 	rmb = false;
 
-	for(int c = 0; c < AMOUNT_OF_KEYS; c++)
-	{
-		//keys[c] = false;
-	}
-
+	//Creating Stones on the border
 	for(int c = 0; c < levelHeight/32; c++)
 	{
 		stones.push_back(new GameObject(float(c * 32),0.0,stoneSprite));
@@ -104,17 +116,81 @@ Main::Main(int width, int height) :
 		stones.push_back(new GameObject(float(levelWidth - 32),float(c * 32),stoneSprite));
 	}
 
-	//srand(time(NULL));
-	for(int c = 0; c < number_of_stones; c++)
-	{
-		float xx = float(rand()%levelWidth);
-		float yy = float (rand()%levelHeight);
-		if(xx >= player.getX() && xx <= player.getX() + player.getSprite()->getWidth() && yy >= player.getY() && yy <= player.getSprite()->getHeight()) continue;
-		stones.push_back(new GameObject(xx,yy,stoneSprite));
-	}
+	//Spawning Level-Specific Stones
+	int w						= stoneSprite->getWidth();
+	int h						= stoneSprite->getHeight();
+	int siberiaIglooHalfWidth	= 8;
+	int siberiaIglooStartX		= levelWidth/2 - siberiaIglooHalfWidth * stoneSprite->getWidth();
+	int siberiaIglooStartY		= levelHeight/2  - 100;
 
-	//tigers.push_back(std::unique_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,300,300,&xOffset,&yOffset,&player)));
-	//tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,100,100,&xOffset,&yOffset,&player)));
+	switch(lvl)
+	{
+	case Field:
+		for(int c = 0; c < number_of_stones; c++)
+		{
+			float xx = float(rand()%levelWidth);
+			float yy = float (rand()%levelHeight);
+			if(xx >= player.getX() && xx <= player.getX() + player.getSprite()->getWidth() && yy >= player.getY() && yy <= player.getSprite()->getHeight()) continue;
+			stones.push_back(new GameObject(xx,yy,stoneSprite));
+		}
+		break;
+	case Siberia:
+		//Add Stones on top half of igloo
+		for(int i = siberiaIglooStartX; i < levelWidth/2 + siberiaIglooHalfWidth * w; i += 32) stones.push_back(new GameObject(i,siberiaIglooStartY,stoneSprite));
+		//Round Part
+		for(auto c = 1; c <= siberiaIglooHalfWidth/2; c++)
+		{
+			//Left Side
+			stones.push_back(new GameObject(siberiaIglooStartX - (c*w),siberiaIglooStartY + c * h,stoneSprite));
+			//Right Side
+			stones.push_back(new GameObject(siberiaIglooStartX + (2*siberiaIglooHalfWidth * w) + ((c-1)*w),siberiaIglooStartY + c * h,stoneSprite));
+		}
+		//Round Part 2
+		for(auto c = 1; c <= siberiaIglooHalfWidth/2; c++)
+		{
+			//Left Side
+			stones.push_back(new GameObject(siberiaIglooStartX - ((c + siberiaIglooHalfWidth/2)*w),siberiaIglooStartY + (siberiaIglooHalfWidth/2 + 2*c - 1) * h,stoneSprite));
+			stones.push_back(new GameObject(siberiaIglooStartX - ((c + siberiaIglooHalfWidth/2)*w),siberiaIglooStartY + (siberiaIglooHalfWidth/2 + 2*c) * h,stoneSprite));
+			//Right Side
+			stones.push_back(new GameObject(siberiaIglooStartX + (2*siberiaIglooHalfWidth * w) + ((c-1 + siberiaIglooHalfWidth/2)*w),siberiaIglooStartY + (siberiaIglooHalfWidth/2 + 2*c - 1) * h,stoneSprite));
+			stones.push_back(new GameObject(siberiaIglooStartX + (2*siberiaIglooHalfWidth * w) + ((c-1 + siberiaIglooHalfWidth/2)*w),siberiaIglooStartY + (siberiaIglooHalfWidth/2 + 2*c) * h,stoneSprite));
+		}
+
+		//Four straight stones on each side
+		//Left side
+		stones.push_back(new GameObject(siberiaIglooStartX - siberiaIglooHalfWidth * w + w,siberiaIglooStartY + 3  * (siberiaIglooHalfWidth/2) * h + h,stoneSprite));
+		stones.push_back(new GameObject(siberiaIglooStartX - siberiaIglooHalfWidth * w + w,siberiaIglooStartY + 3  * (siberiaIglooHalfWidth/2) * h + 2 * h,stoneSprite));
+		stones.push_back(new GameObject(siberiaIglooStartX - siberiaIglooHalfWidth * w + w,siberiaIglooStartY + 3  * (siberiaIglooHalfWidth/2) * h + 3 * h,stoneSprite));
+		stones.push_back(new GameObject(siberiaIglooStartX - siberiaIglooHalfWidth * w + w,siberiaIglooStartY + 3  * (siberiaIglooHalfWidth/2) * h + 4 * h,stoneSprite));
+		//Right Side
+		stones.push_back(new GameObject(siberiaIglooStartX + 3*siberiaIglooHalfWidth * w - 2*w,siberiaIglooStartY + 3  * (siberiaIglooHalfWidth/2) * h + 1 * h,stoneSprite));
+		stones.push_back(new GameObject(siberiaIglooStartX + 3*siberiaIglooHalfWidth * w - 2*w,siberiaIglooStartY + 3  * (siberiaIglooHalfWidth/2) * h + 2 * h,stoneSprite));
+		stones.push_back(new GameObject(siberiaIglooStartX + 3*siberiaIglooHalfWidth * w - 2*w,siberiaIglooStartY + 3  * (siberiaIglooHalfWidth/2) * h + 3 * h,stoneSprite));
+		stones.push_back(new GameObject(siberiaIglooStartX + 3*siberiaIglooHalfWidth * w - 2*w,siberiaIglooStartY + 3  * (siberiaIglooHalfWidth/2) * h + 4 * h,stoneSprite));
+		
+		//Horizontal Stones
+		for(int c = 1; c <= siberiaIglooHalfWidth/2; c++)
+		{
+			//Left Side
+			stones.push_back(new GameObject(siberiaIglooStartX - siberiaIglooHalfWidth*w + (1+c)*w,siberiaIglooStartY + 3*(siberiaIglooHalfWidth/2)*h + 5*h,stoneSprite));
+			//Right Side
+			stones.push_back(new GameObject(siberiaIglooStartX + 3*siberiaIglooHalfWidth*w - (2+c)*w,siberiaIglooStartY + 3*(siberiaIglooHalfWidth/2)*h + 5*h,stoneSprite));
+		}
+
+		//Vertical Stones
+		for(int c = 1; c <= siberiaIglooHalfWidth/2; c++)
+		{
+			//Left Side
+			stones.push_back(new GameObject(siberiaIglooStartX - siberiaIglooHalfWidth*w + (1+siberiaIglooHalfWidth/2)*w,siberiaIglooStartY+3*(siberiaIglooHalfWidth/2)*h + (5+c)*h,stoneSprite));
+			//Right Side
+			stones.push_back(new GameObject(siberiaIglooStartX +3*siberiaIglooHalfWidth*w - (2+siberiaIglooHalfWidth/2)*w,siberiaIglooStartY+3*(siberiaIglooHalfWidth/2)*h + (5+c)*h,stoneSprite));
+		}
+		
+		break;
+	default:
+		printf("Invalid Level\n");
+		break;
+	}
 
 	for(auto c = 0; c < 1; c++)
 	{
@@ -123,8 +199,7 @@ Main::Main(int width, int height) :
 	
 	srand(time(NULL));
 
-	//tgs.push_back(std::shared_ptr<TigerGenerator>(new TigerGenerator(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer(),&player)));
-
+	//Spawning random TigerGenerators
 	for(int c = 0; c < 4; c++)
 	{
 		Position p = {rand()%levelWidth, rand()%levelHeight};
@@ -236,8 +311,8 @@ void Main::gameLoop(void)
 
 		for(int c = 0; c < tgs.size(); c++)
 		{
-			tgs[c]->Update();
-			tgs[c]->Render();
+			if(!paused) tgs[c]->Update();
+			if(!paused) tgs[c]->Render();
 		}
 		//printf("%d\n",tigers.size());
 		//printf("%d\n",tgs.size());
@@ -247,7 +322,7 @@ void Main::gameLoop(void)
 		for(int c = 0; c < tigers.size(); c++)
 		{
 			if(!paused) tigers[c]->Update();
-			tigers[c]->Render();
+			if(!paused) tigers[c]->Render();
 			
 			if(tigers[c]->getHealth() <= 0)
 			{
@@ -305,7 +380,7 @@ void Main::gameLoop(void)
 		{
 			now = SDL_GetTicks();
 			pauseMenuSprite->draw(w/2 - pauseMenuSprite->getWidth()/2, h/2 - pauseMenuSprite->getHeight()/2,0,0);
-			paw->draw(STARTING_POINT_X,pauseIndex * GAP_SIZE + STARTING_POINT_Y,0,0);
+			paw->draw(STARTING_POINT_X  + (w - 800)/2,pauseIndex * (GAP_SIZE) + STARTING_POINT_Y + (h - 600)/2,0,0);
 		}
 
 		if(showControls)
@@ -488,3 +563,4 @@ std::vector<std::shared_ptr<AmmoBox>> Main::ammoBoxes;
 std::vector<std::shared_ptr<TigerGenerator>> Main::tgs;
 int Main::killcount = 0;
 bool Main::paused = false;
+int Main::lvl = Main::Siberia;

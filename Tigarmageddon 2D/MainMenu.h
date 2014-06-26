@@ -32,5 +32,7 @@ private:
 
 	CSprite* menuSprite;
 	CSprite* paw;
+
+	bool help;
 };
 

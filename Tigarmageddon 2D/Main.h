@@ -12,7 +12,7 @@
 class Main
 {
 public:
-	Main(int width, int height);
+	Main(int width, int height, int lvl);
 	~Main(void);
 
 	void gameLoop(void);
@@ -50,7 +50,13 @@ public:
 
 	static CSprite* tigerGeneratorSprite;
 
+	enum Level{Field,Siberia,EndMap};
+	enum GameMode{Survival,EndMode};
+
+	static int lvl;
+
 private:
+
 	bool running;
 	int w;
 	int h;

@@ -1,5 +1,6 @@
 #include "MainMenu.h"
 #include "Main.h"
+#include "GameModeMenu.h"
 
 #define STARTINGPOINT_X 640
 #define STARTINGPOINT_Y 427
@@ -8,14 +9,15 @@ MainMenu::MainMenu(int _width, int _height) :
 	audioRate(44100),
 	audioFormat(AUDIO_S16SYS),
 	audioChannels(2),
-	audioBuffers(1024)
+	audioBuffers(1024),
+	help(false)
 {
 	screen = new Screen(_width,_height,&running,true);
 	width = _width;
 	height = _height;
 
 	menuSprite = new CSprite(screen->getRenderer(),"tigarmageddon2Dmenu.png",0,0,width,height);
-	paw = new CSprite(screen->getRenderer(),"tigerpaw.png",STARTINGPOINT_X,STARTINGPOINT_Y,40,40);
+	paw = new CSprite(screen->getRenderer(),"tigerpaw.png",STARTINGPOINT_X * width/800,STARTINGPOINT_Y * height/600,40,40);
 
 	running = true;
 	pawLocation = 0;
@@ -82,6 +84,10 @@ void MainMenu::menuLoop(void)
 				case 0:
 					running = false;
 					return;
+				case 1:
+					running = false;
+					help = true;
+					return;
 				case 2:
 					exit(0);
 					break;
@@ -98,7 +104,7 @@ void MainMenu::menuLoop(void)
 		}
 
 		menuSprite->draw(0,0,0,0);
-		paw->draw(paw->getX() - 40,paw->getY() + (pawLocation * 60),0,0);
+		paw->draw(paw->getX() - 40,paw->getY() + (pawLocation * 60 * height/600),0,0);
 		if(1000/100 > SDL_GetTicks() - start) SDL_Delay(1000/100 - (SDL_GetTicks() - start));
 		screen->display();
 	}
@@ -110,8 +116,16 @@ MainMenu::~MainMenu(void)
 	delete screen;
 	delete menuSprite;
 	delete paw;
-	std::unique_ptr<Main> main = std::unique_ptr<Main>(new Main(width,height));
-	main->gameLoop();
+	if(help)
+	{
+		std::unique_ptr<GameModeMenu> gm = std::unique_ptr<GameModeMenu>(new GameModeMenu(width,height));
+		gm->menuLoop();
+	}
+	else
+	{
+		std::unique_ptr<Main> main = std::unique_ptr<Main>(new Main(width,height,Main::Field));
+		main->gameLoop();
+	}
 	Mix_HaltMusic();
 	Mix_FreeMusic(themeSong);
 	themeSong = NULL;
