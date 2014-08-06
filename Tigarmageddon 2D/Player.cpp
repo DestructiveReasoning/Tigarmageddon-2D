@@ -27,7 +27,8 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	audioRate(44100),
 	audioFormat(MIX_DEFAULT_FORMAT),
 	audioChannels(2),
-	audioBuffers(1024)
+	audioBuffers(1024),
+	hasPacman(false)
 {
 	/**
 	POSITION OPERATOR TEST
@@ -46,6 +47,7 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	yOffset = _yOffset;
 	gameWidth = _gameWidth;
 	gameHeight = _gameHeight;
+
 	//screen = _screen;
 	weapon = PaintballGun;
 	setDefaultBarrelPosition(21,-8);
@@ -61,6 +63,8 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	clips.push_back(Magazine(12,12));
 	//Gattling Gun
 	clips.push_back(Magazine(100,100));
+	//Pacman Gun
+	clips.push_back(Magazine(0,0));
 	//Glock
 	clips.push_back(Magazine(-1,-1));
 
@@ -69,6 +73,7 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	weaponNames.push_back("Ballistic Knife");
 	weaponNames.push_back("Spas 12");
 	weaponNames.push_back("Gatling Gun");
+	weaponNames.push_back("Pacman");
 	weaponNames.push_back("Glock");
 
 	switch(lvl)
@@ -102,6 +107,9 @@ Player::Player(float X, float Y, CSprite* csprite, float* _xOffset, float* _yOff
 	Mix_AllocateChannels(16);
 	gunshot = Mix_LoadWAV("gunshot.wav");
 	spasShot = Mix_LoadWAV("spasShot.wav");
+
+	bullets.clear();
+	knives.clear();
 }
 
 void Player::Update()
@@ -142,17 +150,17 @@ void Player::Update()
 	}
 	if(!colliding) move2(0,vely);
 
-	//Check Bullet Collisions
-	for(auto c = 0; c < bullets.size(); c++)
+	//Check Collisions with Ballistic Knives
+	for(auto c = 0; c < knives.size(); c++)
 	{
-		if(bullets[c]->onTheGround)
+		if(knives[c]->hasFallen())
 		{
-			if(onCollisionBullet(bullets[c],0,0))
+			if(onCollisionBullet(knives[c],0,0))
 			{
 				(*clips[Ballistic_Knife].getAmmo())++;
-				delete bullets[c];
-				bullets[c--] = bullets.back();
-				bullets.pop_back();
+				delete knives[c];
+				knives[c--] = knives.back();
+				knives.pop_back();
 			}
 		}
 	}
@@ -167,12 +175,14 @@ void Player::Update()
 		}
 	}
 	
+	//Update Bullets
 	for(unsigned int c = 0; c < bullets.size(); c++)
 	{
 		if(c < 0) continue;
 		if(bullets[c] == nullptr) continue;
 		bullets[c]->Update();
-		if(!bullets[c]->onTheGround) bullets[c]->Render();
+		//if(!bullets[c]->onTheGround) bullets[c]->Render();
+		bullets[c]->Render();
 		if(bullets[c]->getAge() >= bullets[c]->getRange() || bullets[c]->destroy)
 		{
 			if(bullets[c]->destructible)
@@ -180,12 +190,45 @@ void Player::Update()
 				delete bullets[c];
 				bullets[c--] = bullets.back();
 				bullets.pop_back();
-			}else 
-			{
-				bullets[c]->onTheGround = true;
 			}
 		}else {
 			//++c;
+		}
+	}
+
+	//Updating Ballistic Knives
+	for(auto c = 0; c < knives.size(); c++)
+	{
+		if(c < 0) continue;
+		if(knives[c] == nullptr) continue;
+		knives[c]->Update();
+		if(!knives[c]->hasFallen()) knives[c]->Render();
+		//knives[c]->Render();
+		if(knives[c]->getAge() >= knives[c]->getRange() || knives[c]->destroy)
+		{
+			if(false) //knives[c]->destructible
+			{
+				delete knives[c];
+				knives[c--] = knives.back();
+				knives.pop_back();
+			}else 
+			{
+				knives[c]->fall();
+			}
+		}else {
+			//++c;
+		}
+	}
+
+	//Update Pacman
+	if(pacman != nullptr)
+	{
+		printf("Updating Pacman\n");
+		if(pacman->destroy) pacman = nullptr;
+		else
+		{
+			pacman->Update();
+			pacman->Render();
 		}
 	}
 
@@ -202,7 +245,7 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 		//SEMI AUTO, SHOOTS WITH LEFT AND RIGHT
 		if(readyToShoot && *clips[PaintballGun].getAmmo() > 0 && mouseButton == 1)
 		{
-			Mix_HaltChannel(-1);
+			//Mix_HaltChannel(-1);
 			Mix_PlayChannel(-1,gunshot,0);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,PaintBallGun_Damage,screen->getRenderer()));
 			(*clips[PaintballGun].getAmmo())--;
@@ -210,7 +253,7 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 		}
 		if(readyToShoot3 && *clips[PaintballGun].getAmmo() > 0 && mouseButton == 3)
 		{
-			Mix_HaltChannel(-1);
+			//Mix_HaltChannel(-1);
 			Mix_PlayChannel(-1,gunshot,0);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,PaintBallGun_Damage,screen->getRenderer()));
 			(*clips[PaintballGun].getAmmo())--;
@@ -220,7 +263,7 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 	case Glock:
 		if(readyToShoot && mouseButton == 1)
 		{
-			Mix_HaltChannel(-1);
+			//Mix_HaltChannel(-1);
 			Mix_PlayChannel(-1,gunshot,0);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,Glock_Damage,screen->getRenderer()));
 			readyToShoot = false;
@@ -230,7 +273,7 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 		now = SDL_GetTicks();
 		if(now - lastTime >= double(1/SKORPION_FIRE_RATE) && *clips[Skorpion].getAmmo() > 0 && mouseButton == 1)
 		{
-			Mix_HaltChannel(-1);
+			//Mix_HaltChannel(-1);
 			Mix_PlayChannel(-1,gunshot,0);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,Skorpion_Damage,screen->getRenderer()));
 			(*clips[Skorpion].getAmmo())--;
@@ -241,7 +284,7 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 		now = SDL_GetTicks();
 		if(now - lastTime >= double(1/GATTLINGGUN_FIRE_RATE) && *clips[GattlingGun].getAmmo() > 0 && mouseButton == 1)
 		{
-			Mix_HaltChannel(-1);
+			//Mix_HaltChannel(-1);
 			Mix_PlayChannel(-1,gunshot,0);
 			bullets.push_back(new Bullet(barrelX,barrelY,velX * BULLET_SPEED,velY * BULLET_SPEED,xOffset,yOffset,100,GattlingGun_Damage,screen->getRenderer()));
 			(*clips[GattlingGun].getAmmo())--;
@@ -318,10 +361,19 @@ void Player::Shoot(int mouseButton, float velX, float velY, Screen* screen)
 			std::cout<<c<<std::endl;
 		}
 		break;
+	case PacmanGun:
+		if(*clips[PacmanGun].getAmmo() > 0)
+		{
+			pacman = new Pacman(barrelX,barrelY,velX * Pacman::Speed,velY*Pacman::Speed,xOffset,yOffset,screen->getRenderer());
+			clips[PacmanGun].setAmmo(0);
+			pacmanWave = Main::wave;
+			weaponSprites[PacmanGun] = hand;
+		}
+		break;
 	case Ballistic_Knife:
 		if(readyToShoot && mouseButton == 1 && *clips[weapon].getAmmo() > 0)
 		{
-			bullets.push_back(new BallisticKnife(centerX,centerY,velX * BallisticKnife::Speed,velY * BallisticKnife::Speed,xOffset,yOffset,screen->getRenderer()));
+			knives.push_back(new BallisticKnife(centerX,centerY,velX * BallisticKnife::Speed,velY * BallisticKnife::Speed,xOffset,yOffset,screen->getRenderer()));
 			readyToShoot = false;
 			(*clips[Ballistic_Knife].getAmmo())--;
 		}
@@ -504,6 +556,16 @@ void Player::setWeapon(int w)
 {
 	if (w < 0) w = Weapon_END - 1;
 	if (w >= Weapon_END) w = 0;
+
+	if(w == PacmanGun)
+	{
+		if(*clips[0].getAmmo() == 1 && *clips[1].getAmmo() == 3 && *clips[2].getAmmo() == 3 && *clips[3].getAmmo() == 7 && Main::wave - pacmanWave >= 2) 
+		{
+			weaponSprites[PacmanGun] = pacmanGun;
+			clips[PacmanGun].setAmmo(1);
+		}
+	}
+
 	weapon = Weapon(w);
 	if(w == GattlingGun || w == Ballistic_Knife)
 	{
@@ -522,6 +584,9 @@ void Player::setWeapon(int w)
 	}else if(weapon == Ballistic_Knife)
 	{
 		speed = Default_Player_Speed + 0.8;
+	}else if(weapon == PaintballGun)
+	{
+		speed = Default_Player_Speed + 0.2;
 	}
 	else speed = Default_Player_Speed;
 }
@@ -669,6 +734,8 @@ C4* Player::getC4()
 void Player::init(SDL_Renderer* renderer)
 {
 	c4 = new C4(0,0,xOffset,yOffset,this,renderer);
+	pacmanGun = new CSprite(renderer,"pacmanGunFull.png",0,0,24,56);
+	hand = new CSprite(renderer,"hand.png",0,0,24,56);
 }
 
 bool Player::isDead(void)
@@ -700,7 +767,15 @@ Player::~Player(void)
 		delete bullets[c];
 	}
 
+	for(auto c = 0; c < knives.size(); c++)
+	{
+		delete knives[c];
+	}
+
 	delete c4;
+	delete pacman;
+	delete pacmanGun;
+	delete hand;
 
 	TTF_CloseFont(font);
 	if(ammoSurface != NULL) SDL_FreeSurface(ammoSurface);
@@ -717,4 +792,4 @@ Player::~Player(void)
 	Mix_FreeChunk(spasShot);
 }
 
-const int Player::Default_Player_Speed = 2;
+const float Player::Default_Player_Speed = 2.0;

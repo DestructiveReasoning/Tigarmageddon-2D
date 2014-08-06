@@ -4,7 +4,8 @@
 BallisticKnife::BallisticKnife(float X, float Y, float velX, float velY, float* _xOffset, float* _yOffset,SDL_Renderer* renderer) :
 	Bullet(X,Y,velX,velY,_xOffset,_yOffset,35,100,renderer),
 	_sprite(renderer,"ballisticknife.png",X,Y,16,16),
-	angle(atan2(velY,velX))
+	angle(atan2(velY,velX)),
+	onTheGround(false)
 {
 	destructible = false;
 	sprite = _sprite;
@@ -28,7 +29,7 @@ void BallisticKnife::Update(void)
 	age++;
 	for(auto c = 0; c < Main::tigers.size(); c++)
 	{
-		if(onCollision(Main::tigers[c].get()))
+		if(onCollision2(Main::tigers[c].get()))
 		{
 			destroy = true;
 			Main::tigers[c]->Damage(damage);
@@ -37,7 +38,7 @@ void BallisticKnife::Update(void)
 
 	for(auto c = 0; c < Main::tgs.size(); c++)
 	{
-		if(onCollision(Main::tgs[c].get()))
+		if(onCollision2(Main::tgs[c].get()))
 		{
 			destroy = true;
 			Main::tgs[c] = Main::tgs.back();
@@ -53,6 +54,16 @@ void BallisticKnife::Render(void)
 	sprite.getRectByReference()->x = int(x) + *xOffset;
 	sprite.getRectByReference()->y = int(y) + *yOffset;
 	SDL_RenderCopyEx(sprite.getRenderer(),sprite.getTexture(),NULL,sprite.getRectByReference(),angle * 180/M_PI + 90,&center,SDL_FLIP_NONE);
+}
+
+bool BallisticKnife::hasFallen(void)
+{
+	return onTheGround;
+}
+
+void BallisticKnife::fall()
+{
+	onTheGround = true;
 }
 
 BallisticKnife::~BallisticKnife(void)

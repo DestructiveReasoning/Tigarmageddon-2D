@@ -14,8 +14,12 @@ public:
 
 	const static int Speed;
 
+	bool hasFallen();
+	void fall();
+
 private:
 	CSprite _sprite;
 	double angle;
+	bool onTheGround;
 };
 

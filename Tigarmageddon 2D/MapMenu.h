@@ -6,7 +6,7 @@
 class MapMenu : public Menu
 {
 public:
-	MapMenu(int width, int height);
+	MapMenu(int width, int height, int GameMode);
 	~MapMenu(void);
 
 	void menuLoop();
@@ -18,5 +18,8 @@ private:
 	bool back;
 	bool field;
 	bool siberia;
+	bool random;
+
+	int gameMode;
 };
 

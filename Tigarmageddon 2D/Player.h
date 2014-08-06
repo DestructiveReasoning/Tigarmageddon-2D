@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
-#include "Bullet.h"
+#include "Pacman.h"
 #include "BallisticKnife.h"
 #include "destructive_reasoning.h"
 #include "Screen.h"
@@ -35,7 +35,7 @@ public:
 	void cock(int mouseButton);
 
 	//enum Weapon{PaintballGun,Glock,Skorpion,GattlingGun,Spas,Ballistic_Knife,Weapon_END};
-	enum Weapon{PaintballGun,Skorpion,Ballistic_Knife,Spas,GattlingGun,Glock,Weapon_END};
+	enum Weapon{PaintballGun,Skorpion,Ballistic_Knife,Spas,GattlingGun,PacmanGun,Glock,Weapon_END};
 
 	void initHUD();
 	void renderHUD();
@@ -52,7 +52,7 @@ public:
 	bool onCollision(GameObject* object, float velX, float velY);
 	bool onCollisionBullet(Bullet* object, float velX, float velY);
 
-	const static int Default_Player_Speed;
+	const static float Default_Player_Speed;
 
 	void init(SDL_Renderer* renderer);
 
@@ -85,6 +85,9 @@ private:
 	SDL_Renderer* renderer;
 
 	std::vector<Bullet*> bullets;
+	std::vector<BallisticKnife*> knives;
+	Pacman *pacman;
+
 	std::vector<Magazine> clips;
 	std::vector<std::string> weaponNames;
 	std::vector<CSprite*> weaponSprites;
@@ -139,5 +142,10 @@ private:
 	Mix_Chunk* spasShot;
 
 	bool dead;
+	bool hasPacman;
+	int pacmanWave;
+
+	CSprite *pacmanGun;
+	CSprite *hand;
 };
 

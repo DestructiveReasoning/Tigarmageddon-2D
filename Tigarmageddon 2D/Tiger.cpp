@@ -8,7 +8,8 @@ Tiger::Tiger(SDL_Renderer* _renderer,std::vector<std::shared_ptr<CSprite>> _spri
 	player(_player),
 	animationSpeed(250),
 	renderer(_renderer),
-	spriteVector(_spriteVector)
+	spriteVector(_spriteVector),
+	BounceVel(4)
 {
 	switch(tiger_type)
 	{
@@ -58,29 +59,31 @@ void Tiger::Update(void)
 	angle = atan2(ycomponent,xcomponent);
 	//std::cout<<angle<<std::endl;
 
-	velx = -(cos(angle) * speed);
-	vely = -(sin(angle) * speed);
+	velx = (float)-(cos(angle) * speed);
+	vely = (float)-(sin(angle) * speed);
 
 	bool colliding = false;
-	for(int c = 0; c < Main::stones.size(); c++)
+	for(unsigned int c = 0; c < Main::stones.size(); c++)
 	{
 		if(onCollision(Main::stones[c],velx,0)) colliding = true;
 	}
 	if(!colliding) x += velx;
-	for(int c = 0; c < Main::stones.size(); c++)
+	else x -= signOfFloat(velx) * BounceVel;
+	for(unsigned int c = 0; c < Main::stones.size(); c++)
 	{
 		if(onCollision(Main::stones[c],0,vely)) colliding = true;
 		if(onCollision(Main::stones[c],velx,vely)) col = true;
 	}
 	if(!colliding) y += vely;
-	squareRect.x = x;
-	squareRect.y = y;
+	else y -= signOfFloat(vely) * BounceVel;
+	squareRect.x = (int)x;
+	squareRect.y = (int)y;
 	//rect.x = x + sin(angle + M_PI/2) * sprite->getHeight();
 	//rect.y = y - sin(angle + M_PI/2) * sprite->getWidth();
 	centerX = x + sprite->getRect().w/2;
 	centerY = y + sprite->getRect().h/2;
-	rect.x = centerX + (cos(angle) - sin(angle));
-	rect.y = centerY + (cos(angle) + sin(angle));
+	rect.x = (int)centerX + (int)(cos(angle) - sin(angle));
+	rect.y = (int)centerY + (int)(cos(angle) + sin(angle));
 	//std::cout<<angle<<std::endl;
 	//std::cout<<onCollision()<<std::endl;
 }
@@ -88,8 +91,8 @@ void Tiger::Update(void)
 void Tiger::Render(void)
 {
 	//std::cout<<"Rendering"<<std::endl;
-	sprite->getRectByReference()->x = int(x) + *xOffset;
-	sprite->getRectByReference()->y = int(y) + *yOffset;
+	sprite->getRectByReference()->x = int(x) + (int)*xOffset;
+	sprite->getRectByReference()->y = int(y) + (int)*yOffset;
 	SDL_Point center = {16,40};
 	SDL_RenderCopyEx(renderer,sprite->getTexture(),NULL,sprite->getRectByReference(),angle * 180/M_PI - 90,&center,SDL_FLIP_NONE);
 }
@@ -164,6 +167,6 @@ Tiger::~Tiger(void)
 {
 }
 
-const float Tiger::NORMAL_TIGER_SPEED_CONSTANT = 1.2;
-const float Tiger::SIBERIAN_TIGER_SPEED = 1.4;
-const float Tiger::SUMATRAN_TIGER_SPEED = 1.05;
+const float Tiger::NORMAL_TIGER_SPEED_CONSTANT = 1.2f;
+const float Tiger::SIBERIAN_TIGER_SPEED = 1.4f;
+const float Tiger::SUMATRAN_TIGER_SPEED = 1.05f;

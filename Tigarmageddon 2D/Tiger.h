@@ -47,7 +47,7 @@ private:
 
 	double angle;
 
-	int animationSpeed;
+	unsigned int animationSpeed;
 
 	std::vector<std::shared_ptr<CSprite>> spriteVector;
 
@@ -61,5 +61,7 @@ private:
 	SDL_Rect rect;
 
 	bool col;
+
+	const int BounceVel;
 };
 

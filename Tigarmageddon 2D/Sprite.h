@@ -21,6 +21,8 @@ public:
 	SDL_Texture* getTexture(void);
 	SDL_Renderer* getRenderer(void);
 
+	bool operator==(CSprite *s);
+
 private:
 	SDL_Texture* texture;
 	SDL_Rect rect;
@@ -32,5 +34,6 @@ private:
 	int height;
 	int speed;
 	SDL_Renderer* renderer;
+	std::string path;
 };
 

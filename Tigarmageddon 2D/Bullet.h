@@ -10,7 +10,7 @@ class Bullet : public GameObject
 public:
 	Bullet(float X, float Y, float velX, float velY, float* _xOffset, float* _yOffset, int range, int damage, SDL_Renderer* renderer);
 	virtual void Update();
-	void Render();
+	virtual void Render();
 	int getRange(void);
 	int getAge(void);
 
@@ -20,14 +20,10 @@ public:
 	bool destroy;
 
 	bool destructible;
-	bool onTheGround;
 
 	CSprite getProjectileSprite(void);
 
 	~Bullet(void);
-
-private:
-	CSprite* bulletSprite;
 
 protected:
 	CSprite sprite;

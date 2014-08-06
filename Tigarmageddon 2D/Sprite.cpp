@@ -2,6 +2,7 @@
 
 CSprite::CSprite(SDL_Renderer* render, std::string path, int xp, int yp, int w, int h)
 {
+	this->path = path;
 	renderer = render;
 	x = xp;
 	y = yp;
@@ -34,6 +35,12 @@ void CSprite::draw(int X, int Y, int _xOffset, int _yOffset)
 	centerY = rect.y + rect.h/2;
 	SDL_RenderCopy(renderer,texture,NULL,&rect);
 	//SDL_RenderCopy(renderer,IMG_LoadTexture(renderer,"grassTexture0.bmp"),NULL,&rect);
+}
+
+bool CSprite::operator==(CSprite *s)
+{
+	if(path == s->path) return true;
+	return false;
 }
 
 void CSprite::setX(float X)

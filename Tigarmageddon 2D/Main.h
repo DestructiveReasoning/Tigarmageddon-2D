@@ -8,11 +8,13 @@
 #include "Particle.h"
 #include "AmmoBox.h"
 #include "TigerGenerator.h"
+#include "GameMode.h"
+#include "SurvivalMode.h"
 
 class Main
 {
 public:
-	Main(int width, int height, int lvl);
+	Main(int width, int height, int lvl, int gameMode);
 	~Main(void);
 
 	void gameLoop(void);
@@ -32,6 +34,7 @@ public:
 	static const int level_height; //No need to initialize
 	static std::vector<GameObject*> stones; //Initialized
 	
+	static bool spawning;
 	static std::vector<std::shared_ptr<Tiger>> tigers; //Initialized
 	std::vector<std::unique_ptr<Particle>> particles;
 
@@ -40,7 +43,11 @@ public:
 
 	std::vector<std::shared_ptr<CSprite>> normalTiger; //No need to initialize
 
+	//SCOREKEEPING
 	static int killcount; //Initialized
+	static int tigersAlive;
+	static int tigersKilledWave;
+	static int tigersSpawnedWave;
 
 	static bool paused; //Initialized
 
@@ -51,9 +58,16 @@ public:
 	static CSprite* tigerGeneratorSprite;
 
 	enum Level{Field,Siberia,EndMap};
-	enum GameMode{Survival,EndMode};
+	enum Game_Mode{Survival,EndMode};
 
 	static int lvl;
+
+	static int CountdownX;
+	static int CountdownY;
+
+	GameMode* game;
+
+	static bool playMusic;
 
 private:
 
@@ -69,6 +83,8 @@ private:
 	CSprite* skorpion;
 	CSprite* gatlingGun;
 	CSprite* spas;
+	CSprite* pacmanGunFull;
+	CSprite* hand;
 	CSprite* emptySprite;
 	CSprite* stoneSprite;
 	CSprite* pauseMenuSprite;

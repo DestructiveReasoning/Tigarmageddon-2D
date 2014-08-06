@@ -65,7 +65,7 @@ GameModeMenu::~GameModeMenu(void)
 	}
 	else if(survival)
 	{
-		std::unique_ptr<MapMenu> m = std::unique_ptr<MapMenu>(new MapMenu(width,height));
+		std::unique_ptr<MapMenu> m = std::unique_ptr<MapMenu>(new MapMenu(width,height,Main::Survival));
 		m->menuLoop();
 	}
 }

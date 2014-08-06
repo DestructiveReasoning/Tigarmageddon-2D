@@ -14,7 +14,7 @@
 #define GAP_SIZE 65
 #define DEATH_LENGTH 5000
 
-Main::Main(int width, int height, int _lvl) : 
+Main::Main(int width, int height, int _lvl, int gameMode) : 
 	xOffset(0), 
 	yOffset(0), 
 	player(400,400,playerSprite, &xOffset, &yOffset,width,height,bullet,_lvl),
@@ -24,7 +24,7 @@ Main::Main(int width, int height, int _lvl) :
 	deadtimer(-1)
 {
 	lvl = _lvl;
-	wave = 1;
+	wave = 0;
 	stones.clear();
 	tigers.clear();
 	tgs.clear();
@@ -41,6 +41,18 @@ Main::Main(int width, int height, int _lvl) :
 	//player.setScreen(screen);
 	player.setRenderer(screen->getRenderer());
 	player.init(screen->getRenderer());
+
+	game = nullptr;
+
+	switch(gameMode)
+	{
+	case Survival:
+		game = new SurvivalMode(w,h, levelWidth, levelHeight, &xOffset, &yOffset, &player, screen);
+		break;
+	default:
+		printf("The game mode passed in from the GameModeMenu is not valid.\n");
+		break;
+	}
 
 	grassSprite = new CSprite(screen->getRenderer(),"grassTexture0.bmp",0,0,width,height);
 	playerSprite = new CSprite(screen->getRenderer(),"testballwhite.png",120,120,32,32);
@@ -60,6 +72,11 @@ Main::Main(int width, int height, int _lvl) :
 	ammoBoxSprite = new CSprite(screen->getRenderer(),"AmmoBox.png",0,0,32,32);
 	bloodSprite = new CSprite(screen->getRenderer(),"Blood.png",0,0,w,h);
 	youDied = new CSprite(screen->getRenderer(),"YouDied.png",0,0,600,200);
+	pacmanGunFull = new CSprite(screen->getRenderer(),"pacmanGunFull.png",0,0,24,56);
+	hand = new CSprite(screen->getRenderer(),"hand.png",0,0,24,56);
+
+	Main::CountdownX = w/2 - 64;
+	Main::CountdownY = 64;
 
 	//SET LEVEL-SPECIFIC SPRITES
 	switch(lvl)
@@ -71,6 +88,7 @@ Main::Main(int width, int height, int _lvl) :
 	case Siberia:
 		stoneSprite = new CSprite(screen->getRenderer(),"ice.png",0,0,32,32);
 		land = new CSprite(screen->getRenderer(),"snow0.png",0,0,1000,1000);
+		break;
 	default:
 		printf("Invalid Level\n");
 		break;
@@ -100,9 +118,8 @@ Main::Main(int width, int height, int _lvl) :
 	player.AddWeaponSprite(emptySprite);
 	player.AddWeaponSprite(spas);
 	player.AddWeaponSprite(gatlingGun);
+	player.AddWeaponSprite(hand);
 	player.AddWeaponSprite(glock);
-
-	wave = 1;
 
 	lmb = false;
 	rmb = false;
@@ -192,12 +209,11 @@ Main::Main(int width, int height, int _lvl) :
 		break;
 	}
 
+	srand(time(NULL));
 	for(auto c = 0; c < 1; c++)
 	{
 		ammoBoxes.push_back(std::shared_ptr<AmmoBox>(new AmmoBox(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer())));
 	}
-	
-	srand(time(NULL));
 
 	//Spawning random TigerGenerators
 	for(int c = 0; c < 4; c++)
@@ -207,15 +223,15 @@ Main::Main(int width, int height, int _lvl) :
 		{
 			do
 			{
-				p.x = rand()%levelWidth;
-				p.y = rand()%levelHeight;
+				p.x = rand()%(levelWidth-stoneSprite->getWidth()*3) + stoneSprite->getWidth();
+				p.y = rand()%(levelHeight-stoneSprite->getHeight()*3) + stoneSprite->getHeight();
 				for(int q = 0; q < Main::stones.size(); q++)
 				{
 					Position pq = {Main::stones[q]->getX(),Main::stones[q]->getY()};
 					while(p == pq)
 					{
-						p.x = rand()%levelWidth;
-						p.y = rand()%levelHeight;
+						p.x = rand()%(levelWidth-stoneSprite->getWidth()*3) + stoneSprite->getWidth();
+						p.y = rand()%(levelHeight-stoneSprite->getHeight()*3) + stoneSprite->getHeight();
 					}
 				}
 			}
@@ -228,8 +244,8 @@ Main::Main(int width, int height, int _lvl) :
 				Position pq = {Main::stones[q]->getX(), Main::stones[q]->getY()};
 				while(p == pq)
 				{
-					p.x = rand()%levelWidth;
-					p.y = rand()%levelHeight;
+					p.x = rand()%(levelWidth-stoneSprite->getWidth()*3) + stoneSprite->getWidth();
+					p.y = rand()%(levelHeight-stoneSprite->getHeight()*3) + stoneSprite->getHeight();
 				}
 			}
 		}
@@ -264,6 +280,9 @@ Main::~Main(void)
 	delete ammoBoxSprite;
 	delete bloodSprite;
 	delete youDied;
+	delete game;
+	delete pacmanGunFull;
+	delete hand;
 	for(unsigned int c = 0; c < stones.size(); c++)
 	{
 		delete stones[c];
@@ -290,6 +309,7 @@ void Main::gameLoop(void)
 
 		screen->refresh();
 
+		//Drawing terrain
 		for(int c = 0; c < 3; c++)
 		{
 			for(int j = 0; j < 3; j++)
@@ -314,11 +334,11 @@ void Main::gameLoop(void)
 			if(!paused) tgs[c]->Update();
 			if(!paused) tgs[c]->Render();
 		}
-		//printf("%d\n",tigers.size());
-		//printf("%d\n",tgs.size());
-		
+		//End drawing terrain
+
 		player.Render(xOffset,yOffset);
 
+		//Updating tigers
 		for(int c = 0; c < tigers.size(); c++)
 		{
 			if(!paused) tigers[c]->Update();
@@ -329,14 +349,13 @@ void Main::gameLoop(void)
 				tigers[c--] = tigers.back();
 				tigers.pop_back();
 				killcount++;
-				if(killcount < 0)
-				{
-					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player,0)));
-					tigers.push_back(std::shared_ptr<Tiger>(new Tiger(screen->getRenderer(),normalTiger,rand()%2700 + 80, rand()%2700 + 80,&xOffset,&yOffset,&player,1)));
-				}
-				ammoBoxes.push_back(std::shared_ptr<AmmoBox>(new AmmoBox(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer())));
+				tigersKilledWave++;
+				ammoBoxes.push_back(std::shared_ptr<AmmoBox>(new AmmoBox(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer()))); //Remove?
 			}
 		}
+		//End updating tigers
+
+		if(!paused) game->update();
 
 		bool mouseButton1 = false,mouseButton3 = false;
 
@@ -516,6 +535,12 @@ void Main::handleInput4(Screen* screen)
 		}
 	}
 
+	if(state[SDL_SCANCODE_DELETE])
+	{
+		Mix_HaltMusic();
+		playMusic = !playMusic;
+	}
+
 	double xcomponent,ycomponent,xVel,yVel;
 	double angle;
 	SDL_GetMouseState(&mouseX,&mouseY);
@@ -537,6 +562,7 @@ void Main::handleInput4(Screen* screen)
 			player.cock(3);
 		}
 	}
+	if(SDL_GetMouseState(NULL,NULL)&SDL_BUTTON(2)) Mix_HaltMusic();
 }
 
 int Main::getWidth(void)
@@ -549,7 +575,7 @@ int Main::getHeight(void)
 	return h;
 }
 
-int Main::wave = 1;
+int Main::wave = 0;
 const int Main::AMOUNT_OF_KEYS = 100;
 const int Main::level_width = 3000;
 const int Main::level_height = 3000;
@@ -561,6 +587,17 @@ std::vector<GameObject*> Main::stones;
 std::vector<std::shared_ptr<Tiger>> Main::tigers;
 std::vector<std::shared_ptr<AmmoBox>> Main::ammoBoxes;
 std::vector<std::shared_ptr<TigerGenerator>> Main::tgs;
+
 int Main::killcount = 0;
+int Main::tigersAlive = 0;
+int Main::tigersKilledWave = 0;
+int Main::tigersSpawnedWave = 0;
+bool Main::spawning = true;
+
 bool Main::paused = false;
 int Main::lvl = Main::Siberia;
+
+int Main::CountdownX;
+int Main::CountdownY;
+
+bool Main::playMusic = true;

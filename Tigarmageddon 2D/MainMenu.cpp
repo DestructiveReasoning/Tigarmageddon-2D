@@ -29,14 +29,12 @@ MainMenu::MainMenu(int _width, int _height) :
 		printf("Cannot open audio device.\n");
 	}
 
-	themeSong = nullptr;
-	//themeSong = Mix_LoadMUS("Arsis-My_Oath_To_Madness_8_bit_Remix_.wav");
-	themeSong = Mix_LoadMUS("AmonAmarthWarOfTheGods.mp3");
+	themeSong = Mix_LoadMUS("music/AmonAmarthWarOfTheGods.mp3");
 	if(themeSong == nullptr)
 	{
 		printf("Could not open music file.\nMake sure it's in OGG format.\n");
 	}
-	Mix_PlayMusic(themeSong,-1);
+	Mix_PlayMusic(themeSong,0);
 }
 
 void MainMenu::menuLoop(void)
@@ -123,11 +121,11 @@ MainMenu::~MainMenu(void)
 	}
 	else
 	{
-		std::unique_ptr<Main> main = std::unique_ptr<Main>(new Main(width,height,Main::Field));
+		std::unique_ptr<Main> main = std::unique_ptr<Main>(new Main(width,height,Main::Field, Main::Survival));
 		main->gameLoop();
 	}
-	Mix_HaltMusic();
+	//Mix_HaltMusic();
 	Mix_FreeMusic(themeSong);
 	themeSong = NULL;
-	Mix_CloseAudio();
+	//Mix_CloseAudio();
 }

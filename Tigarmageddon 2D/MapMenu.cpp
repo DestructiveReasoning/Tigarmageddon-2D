@@ -2,16 +2,19 @@
 #include "Main.h"
 #include "GameModeMenu.h"
 #include <memory>
+#include <time.h>
 
-#define GAP_HEIGHT 64
+#define GAP_HEIGHT 66
 #define STARTING_POINT_X 500 - 8
 #define STARTING_POINT_Y 200 -32
 
-MapMenu::MapMenu(int width, int height) :
+MapMenu::MapMenu(int width, int height, int _gameMode) :
 	Menu(width,height),
 	back(false),
 	field(false),
-	siberia(false)
+	siberia(false),
+	random(false),
+	gameMode(_gameMode)
 {
 	menuSprite = new CSprite(screen->getRenderer(),"MapMenu.png",0,0,width,height);
 	running = true;
@@ -49,12 +52,21 @@ void MapMenu::menuLoop()
 					back = false;
 					siberia = false;
 					running = false;
+					random = false;
 					break;
 				case Main::Siberia:
 					siberia = true;
 					field = false;
 					running = false;
 					back = false;
+					random = false;
+				case Main::EndMap:
+					random = true;
+					siberia = false;
+					field = false;
+					running = false;
+					back = false;
+					break;
 				}
 			default:
 				break;
@@ -76,12 +88,12 @@ void MapMenu::movePaw(int dir)
 		case Up:
 			if(pawLocation == 0)
 			{
-				pawLocation = Main::EndMap - 1;
+				pawLocation = Main::EndMap;
 			}
 			else pawLocation--;
 			break;
 		case Down:
-			if(pawLocation >= Main::EndMap - 1) pawLocation = 0;
+			if(pawLocation >= Main::EndMap) pawLocation = 0;
 			else pawLocation++;
 			break;
 		default:
@@ -94,6 +106,7 @@ void MapMenu::movePaw(int dir)
 
 MapMenu::~MapMenu(void)
 {
+	srand(time(NULL));
 	if(back)
 	{
 		std::unique_ptr<GameModeMenu> gm = std::unique_ptr<GameModeMenu>(new GameModeMenu(width,height));
@@ -101,12 +114,17 @@ MapMenu::~MapMenu(void)
 	}
 	else if(field)
 	{
-		std::unique_ptr<Main> m = std::unique_ptr<Main>(new Main(width,height,Main::Field));
+		std::unique_ptr<Main> m = std::unique_ptr<Main>(new Main(width,height,Main::Field, gameMode));
 		m->gameLoop();
 	}
 	else if(siberia)
 	{
-		std::unique_ptr<Main> m = std::unique_ptr<Main>(new Main(width,height,Main::Siberia));
+		std::unique_ptr<Main> m = std::unique_ptr<Main>(new Main(width,height,Main::Siberia, gameMode));
+		m->gameLoop();
+	}
+	else if(random)
+	{
+		std::unique_ptr<Main> m = std::unique_ptr<Main>(new Main(width,height,rand()%(Main::EndMap), gameMode));
 		m->gameLoop();
 	}
 }

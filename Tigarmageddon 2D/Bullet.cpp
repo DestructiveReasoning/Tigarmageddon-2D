@@ -8,8 +8,7 @@ Bullet::Bullet(float X, float Y, float velX, float velY, float* _xOffset, float*
 	range(_range),
 	age(0),
 	damage(_damage),
-	sprite(renderer,"bullet8.png",int(X),int(Y),8,8),
-	onTheGround(false)
+	sprite(renderer,"bullet8.png",int(X),int(Y),8,8)
 {
 	velx = velX;
 	vely = velY;
