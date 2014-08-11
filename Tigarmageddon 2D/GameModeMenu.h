@@ -12,9 +12,14 @@ public:
 	~GameModeMenu(void);
 
 	void menuLoop();
+	void movePaw(int dir);
+
+	enum Directions {Up,Down};
 
 private:
 	bool mainMenu;
 	bool survival;
+	bool mercenary;
+	bool training;
 };
 

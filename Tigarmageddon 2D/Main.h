@@ -48,6 +48,7 @@ public:
 	static int tigersAlive;
 	static int tigersKilledWave;
 	static int tigersSpawnedWave;
+	static int points;
 
 	static bool paused; //Initialized
 
@@ -58,7 +59,7 @@ public:
 	static CSprite* tigerGeneratorSprite;
 
 	enum Level{Field,Siberia,EndMap};
-	enum Game_Mode{Survival,EndMode};
+	enum Game_Mode{Survival,Mercenary,Training,EndMode};
 
 	static int lvl;
 
@@ -66,6 +67,7 @@ public:
 	static int CountdownY;
 
 	GameMode* game;
+	static int gameMode;
 
 	static bool playMusic;
 

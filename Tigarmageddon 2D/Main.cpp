@@ -7,6 +7,8 @@
 #include "MainMenu.h"
 #include <SDL_mouse.h>
 #include <SDL_main.h>
+#include "MercenaryMode.h"
+#include "TrainingMode.h"
 
 #define MAX_KILL_COUNT 5
 #define STARTING_POINT_X 300
@@ -23,12 +25,14 @@ Main::Main(int width, int height, int _lvl, int gameMode) :
 	showControls(false),
 	deadtimer(-1)
 {
+	this->gameMode = gameMode;
 	lvl = _lvl;
 	wave = 0;
 	stones.clear();
 	tigers.clear();
 	tgs.clear();
 	killcount = 0;
+	points = 0;
 	paused = false;
 	levelWidth = 3000;
 	levelHeight = 3000;
@@ -48,6 +52,12 @@ Main::Main(int width, int height, int _lvl, int gameMode) :
 	{
 	case Survival:
 		game = new SurvivalMode(w,h, levelWidth, levelHeight, &xOffset, &yOffset, &player, screen);
+		break;
+	case Mercenary:
+		game = new MercenaryMode(w,h,levelWidth,levelHeight,&xOffset,&yOffset,&player,screen);
+		break;
+	case Training:
+		game = new TrainingMode(w,h,levelWidth,levelHeight,&xOffset,&yOffset,&player,screen);
 		break;
 	default:
 		printf("The game mode passed in from the GameModeMenu is not valid.\n");
@@ -350,15 +360,19 @@ void Main::gameLoop(void)
 				tigers.pop_back();
 				killcount++;
 				tigersKilledWave++;
+				points += MercenaryMode::TigerBounty;
 				ammoBoxes.push_back(std::shared_ptr<AmmoBox>(new AmmoBox(rand()%levelWidth,rand()%levelHeight,&xOffset,&yOffset,screen->getRenderer()))); //Remove?
 			}
 		}
 		//End updating tigers
 
+		//Update GameMode
 		if(!paused) game->update();
+
 
 		bool mouseButton1 = false,mouseButton3 = false;
 
+		//Check Quit
 		if(screen->getEvent()->type == SDL_QUIT)
 		{
 			running = false;
@@ -366,6 +380,7 @@ void Main::gameLoop(void)
 			return;
 		}
 
+		//Handle Input
 		if(!player.isDead()) handleInput4(screen);
 
 	    if(screen->getEvent()->type == SDL_QUIT)
@@ -381,6 +396,7 @@ void Main::gameLoop(void)
 		r.w = 300;
 		r.h = 300;
 
+		//Check Dead
 		if(player.isDead())
 		{
 			bloodSprite->draw(0,0,0,0);
@@ -395,6 +411,7 @@ void Main::gameLoop(void)
 			}
 		}
 
+		//Check Paused
 		if(paused)
 		{
 			now = SDL_GetTicks();
@@ -402,17 +419,16 @@ void Main::gameLoop(void)
 			paw->draw(STARTING_POINT_X  + (w - 800)/2,pauseIndex * (GAP_SIZE) + STARTING_POINT_Y + (h - 600)/2,0,0);
 		}
 
+		//Show Controls
 		if(showControls)
 		{
 			std::unique_ptr<CSprite> cs = std::unique_ptr<CSprite>(new CSprite(screen->getRenderer(),"tigarmageddon2dcontrols.png",0,0,w,h));
 			cs->draw(0,0,0,0);
 			screen->display();
 		}
+
+		//Control Framerate
 		if(1000/100 > SDL_GetTicks() - start) SDL_Delay(1000/100 - (SDL_GetTicks() - start));
-		s.str(std::string());
-		s.clear();
-		s<<"Tigers Killed: "<<killcount;
-		SDL_SetWindowTitle(screen->getWindow(),s.str().c_str());
 
 		screen->display();
 		if(tgs.size() == 0) printf("*****NO MORE TIGER GENERATORS*****\n");
@@ -589,6 +605,7 @@ std::vector<std::shared_ptr<AmmoBox>> Main::ammoBoxes;
 std::vector<std::shared_ptr<TigerGenerator>> Main::tgs;
 
 int Main::killcount = 0;
+int Main::points = 0;
 int Main::tigersAlive = 0;
 int Main::tigersKilledWave = 0;
 int Main::tigersSpawnedWave = 0;
@@ -601,3 +618,4 @@ int Main::CountdownX;
 int Main::CountdownY;
 
 bool Main::playMusic = true;
+int Main::gameMode;

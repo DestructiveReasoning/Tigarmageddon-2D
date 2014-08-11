@@ -48,7 +48,7 @@
 		Swamphell				- Kalmah			*
 		They Will Return		- Kalmah			*
 		Beyond the Dark Sun		- Wintersun			*
-		Sleeping Stars			- Wintersun			?
+
 */
 
 int main(int argc, char** argv)

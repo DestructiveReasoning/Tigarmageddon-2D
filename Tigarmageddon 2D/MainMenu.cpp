@@ -55,7 +55,7 @@ void MainMenu::menuLoop(void)
 				exit(0);
 				break;
 			case SDLK_UP:
-				if(start - last > 125)
+				if(start - last > 175)
 				{
 					pawLocation--;
 					if(pawLocation < 0)
@@ -66,7 +66,7 @@ void MainMenu::menuLoop(void)
 				}
 				break;
 			case SDLK_DOWN:
-				if(start - last > 125)
+				if(start - last > 175)
 				{
 					pawLocation++;
 					if(pawLocation > 2)
@@ -116,13 +116,13 @@ MainMenu::~MainMenu(void)
 	delete paw;
 	if(help)
 	{
-		std::unique_ptr<GameModeMenu> gm = std::unique_ptr<GameModeMenu>(new GameModeMenu(width,height));
-		gm->menuLoop();
+		std::unique_ptr<Main> m = std::unique_ptr<Main>(new Main(width,height,Main::Field,Main::Training));
+		m->gameLoop();
 	}
 	else
 	{
-		std::unique_ptr<Main> main = std::unique_ptr<Main>(new Main(width,height,Main::Field, Main::Survival));
-		main->gameLoop();
+		std::unique_ptr<GameModeMenu> gm = std::unique_ptr<GameModeMenu>(new GameModeMenu(width,height));
+		gm->menuLoop();
 	}
 	//Mix_HaltMusic();
 	Mix_FreeMusic(themeSong);

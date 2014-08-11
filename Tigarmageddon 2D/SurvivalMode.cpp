@@ -40,7 +40,11 @@ void SurvivalMode::update()
 	else Main::spawning = true;
 
 	if(Main::tigersKilledWave >= killquota) nextWave();
-	if(Main::tigers.size() == 0 && Main::tgs.size() == 0) nextWave();
+	if(Main::tigers.size() == 0 && Main::tgs.size() == 0) 
+	{
+		Main::points += Main::wave * 50;
+		nextWave();
+	}
 
 	if(draw && counter < 10)
 		numbers[counter]->draw(width/2 - 64,64,0,0);
@@ -49,6 +53,11 @@ void SurvivalMode::update()
 	{
 		Mix_PlayMusic(GameMode::playList[rand()%GameMode::playList.size()],0);
 	}
+
+	s.str(std::string());
+	s.clear();
+	s<<"Tigers Killed: "<< Main::killcount;
+	SDL_SetWindowTitle(screen->getWindow(),s.str().c_str());
 }
 
 void SurvivalMode::nextWave()
@@ -70,6 +79,7 @@ void SurvivalMode::nextWave()
 	maxAlive = Main::wave * 5 + 5;
 	killquota = Main::wave * 5 + 10;
 	maxWave = killquota;
+	Main::points += Main::wave * 2;
 	Main::wave++;
 	waveGenerators = (Main::wave/3) + 4;
 

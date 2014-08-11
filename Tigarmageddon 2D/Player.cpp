@@ -4,6 +4,7 @@
 #include "Sprite.h"
 #include "Main.h"
 #include "BallisticKnife.h"
+#include "MercenaryMode.h"
 
 #define font_reg 32
 
@@ -170,7 +171,11 @@ void Player::Update()
 	{
 		if(onCollision(Main::ammoBoxes[c].get(),velx,vely))
 		{
-			collectAmmo(c);
+			if(Main::gameMode != Main::Mercenary || Main::points >= MercenaryMode::AmmoPrices[weapon]) 
+			{
+				if(*clips[weapon].getAmmo() < *clips[weapon].getCapacity()) collectAmmo(c);
+				if(Main::gameMode == Main::Mercenary) Main::points -= MercenaryMode::AmmoPrices[weapon];
+			}
 			break;
 		}
 	}
@@ -660,6 +665,7 @@ void Player::renderHUD()
 	s.str(std::string());
 	s.clear();
 	s << weaponNames[weapon];
+	if(Main::gameMode == Main::Mercenary) s << "  (Ammo Cost: " << MercenaryMode::AmmoPrices[weapon] << ")";
 	weaponRect.w = s.str().size() * 16;
 	weaponSurface = TTF_RenderText_Solid(font,s.str().c_str(),fg);
 	SDL_Texture* weaponText = SDL_CreateTextureFromSurface(renderer,weaponSurface);
@@ -751,6 +757,16 @@ void Player::kill(void)
 int Player::getWeapon()
 {
 	return (int)weapon;
+}
+
+bool Player::hasFullAmmo()
+{
+	return *clips[weapon].getAmmo() >= *clips[weapon].getCapacity();
+}
+
+SDL_Renderer* Player::getRenderer()
+{
+	return renderer;
 }
 
 Player::~Player(void)

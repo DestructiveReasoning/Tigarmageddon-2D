@@ -10,7 +10,8 @@ GameMode::GameMode(void)
 		playList.push_back(Mix_LoadMUS("music/FailuresConquest.mp3"));
 		playList.push_back(Mix_LoadMUS("music/Gateways.mp3"));
 		playList.push_back(Mix_LoadMUS("music/LakeBodom.mp3"));
-		playList.push_back(Mix_LoadMUS("music/SleepingStars.mp3"));
+		//playList.push_back(Mix_LoadMUS("music/SleepingStars.mp3"));
+		playList.push_back(Mix_LoadMUS("music/AreYouDeadYet.mp3"));
 		playList.push_back(Mix_LoadMUS("music/WeAreTheNightmare.mp3"));
 		playList.push_back(Mix_LoadMUS("music/TheyWillReturn.mp3"));
 		playList.push_back(Mix_LoadMUS("music/ForVictoryOrDeath.mp3"));

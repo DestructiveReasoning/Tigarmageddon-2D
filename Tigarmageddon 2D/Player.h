@@ -66,6 +66,10 @@ public:
 
 	int getWeapon();
 
+	SDL_Renderer* getRenderer();
+
+	bool hasFullAmmo();
+
 private:
 	float* xOffset;
 	float* yOffset;

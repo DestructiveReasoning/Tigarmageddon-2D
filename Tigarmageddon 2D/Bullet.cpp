@@ -1,5 +1,6 @@
 #include "Bullet.h"
 #include "Main.h"
+#include "MercenaryMode.h"
 
 Bullet::Bullet(float X, float Y, float velX, float velY, float* _xOffset, float* _yOffset, int _range, int _damage, SDL_Renderer* renderer) : 
 	GameObject(X,Y), 
@@ -29,7 +30,7 @@ void Bullet::Update()
 		age++;
 		for(int c = 0; c < Main::tigers.size(); c++)
 		{
-			if(onCollision(Main::tigers[c].get()))
+			if(onCollision2(Main::tigers[c].get()))
 			{
 				destroy = true;
 				Main::tigers[c]->Damage(damage);

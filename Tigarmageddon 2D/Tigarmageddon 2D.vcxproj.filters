@@ -81,6 +81,15 @@
     <ClCompile Include="SurvivalMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Pacman.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MercenaryMode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrainingMode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="destructive_reasoning.h">
@@ -147,6 +156,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SurvivalMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pacman.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MercenaryMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrainingMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,6 @@
 #include "BallisticKnife.h"
 #include "Main.h"
+#include "MercenaryMode.h"
 
 BallisticKnife::BallisticKnife(float X, float Y, float velX, float velY, float* _xOffset, float* _yOffset,SDL_Renderer* renderer) :
 	Bullet(X,Y,velX,velY,_xOffset,_yOffset,35,100,renderer),
@@ -43,6 +44,7 @@ void BallisticKnife::Update(void)
 			destroy = true;
 			Main::tgs[c] = Main::tgs.back();
 			Main::tgs.pop_back();
+			Main::points += MercenaryMode::TigerGeneratorBounty;
 			printf("Destroyed Tiger Generator\n");
 		}
 	}

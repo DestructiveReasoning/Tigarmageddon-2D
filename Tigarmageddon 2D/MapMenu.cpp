@@ -16,6 +16,7 @@ MapMenu::MapMenu(int width, int height, int _gameMode) :
 	random(false),
 	gameMode(_gameMode)
 {
+	pawLocation = 0;
 	menuSprite = new CSprite(screen->getRenderer(),"MapMenu.png",0,0,width,height);
 	running = true;
 }
@@ -60,6 +61,7 @@ void MapMenu::menuLoop()
 					running = false;
 					back = false;
 					random = false;
+					break;
 				case Main::EndMap:
 					random = true;
 					siberia = false;

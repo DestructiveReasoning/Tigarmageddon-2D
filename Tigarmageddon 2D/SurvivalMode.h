@@ -10,11 +10,11 @@ public:
 	SurvivalMode(int width, int height, int levelWidth, int levelHeight, float* xOffset, float* yOffset, Player* player, Screen* screen);
 	~SurvivalMode(void);
 
-	void update();
+	virtual void update();
 
 	std::vector<std::unique_ptr<CSprite>> numbers;
 
-private:
+protected:
 	void nextWave();
 
 	unsigned int maxAlive;
