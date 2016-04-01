@@ -13,8 +13,6 @@ Tigarmageddon 2D is the second game in the series, and the latest one to date. T
 
 The game is being developed in Visual Studio 2012 Express Edition, but I plan on merging to Arch Linux and using vim. 
 
-Tigarmageddon 2D is still in development. I am in college now and I get way too much homework, so development is going very slowly for now. I am studying Pure and Applied Sciences, so we don't learn any computer science (makes sense, right?). Feel free to look over the code, and if you see any problems or ways to improve things such as efficiency, it would be greatly appreciated if you send me an email at harleyw@hotmail.com.
-
 All graphics and animations in the game were designed by me as well, so I don't expect them to be all that great ;)
 
 Please Note
